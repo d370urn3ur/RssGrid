@@ -13,10 +13,8 @@ import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.navigation.NavBackStackEntry
-import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.toRoute
-import com.diamondedge.logging.logging
 import the.autarch.android.newsgrid.LocalNavHostController
 
 // TODO: expect AppBar for each platform (ex: CenterAppBar for iOS)
@@ -45,10 +43,10 @@ fun AppBarTitle(navBackStackEntry: NavBackStackEntry?) {
     val root = route?.split("/")?.firstOrNull()
 
     when (root) {
-        Routes.AppContainer::class.qualifiedName -> Text("NewsGrid")
-        Routes.Search::class.qualifiedName -> Text("Add a Channel")
-        Routes.EntryDetails::class.qualifiedName -> {
-            navBackStackEntry?.toRoute<Routes.EntryDetails>()?.let {
+        Route.AppContainer::class.qualifiedName -> Text("NewsGrid")
+        Route.Search::class.qualifiedName -> Text("Add a Channel")
+        Route.EntryDetails::class.qualifiedName -> {
+            navBackStackEntry?.toRoute<Route.EntryDetails>()?.let {
                 Text(it.channelTitle)
             } ?: Text("Unknown channel")
         }
@@ -61,10 +59,10 @@ fun AppBarActions(route: String?) {
     val navController = LocalNavHostController.current
 
     when (route) {
-        Routes.AppContainer::class.qualifiedName -> IconButton({ navController.navigate(Routes.Search) }) {
+        Route.AppContainer::class.qualifiedName -> IconButton({ navController.navigate(Route.Search) }) {
             Icon(Icons.Default.Add, contentDescription = "Add Channel")
         }
-        Routes.Search::class.qualifiedName -> AppBarButtonImportChannel()
+        Route.Search::class.qualifiedName -> AppBarButtonImportChannel()
     }
 }
 
@@ -75,8 +73,8 @@ fun AppBarNavigationIcon(route: String?) {
     val navController = LocalNavHostController.current
 
     when (root) {
-        Routes.Search::class.qualifiedName,
-        Routes.EntryDetails::class.qualifiedName ->
+        Route.Search::class.qualifiedName,
+        Route.EntryDetails::class.qualifiedName ->
             IconButton({ navController.popBackStack() }) {
                 Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Navigate Back")
             }

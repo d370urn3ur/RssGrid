@@ -9,7 +9,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import newsgrid.composeapp.generated.resources.Res
-import newsgrid.composeapp.generated.resources.vertical_align_bottom
+import newsgrid.composeapp.generated.resources.ic_vertical_align_bottom
 import org.jetbrains.compose.resources.painterResource
 import the.autarch.android.newsgrid.channel.presentation.ImportChannelFromUrlDialog
 
@@ -21,7 +21,7 @@ fun AppBarButtonImportChannel() {
 
     IconButton({ showImportDialog = true }) {
         Icon(
-            painter = painterResource(Res.drawable.vertical_align_bottom),
+            painter = painterResource(Res.drawable.ic_vertical_align_bottom),
             contentDescription = "Import from URL"
         )
     }

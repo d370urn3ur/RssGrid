@@ -8,11 +8,14 @@ import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.Modifier
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
+import androidx.room.RoomDatabase
 import the.autarch.android.newsgrid.channel.api.provideRssParser
 import the.autarch.android.newsgrid.channel.data.ChannelStore
 import the.autarch.android.newsgrid.channel.data.LocalChannelStore
@@ -26,32 +29,27 @@ import the.autarch.android.newsgrid.search.api.provideSearchApi
 @Preview
 fun App() {
 
-//    var channels: List<Channel> by remember { mutableStateOf(emptyList()) }
-//
-//    if (LocalInspectionMode.current) {
-//        LaunchedEffect(Unit) {
-//            val feedBytes = Res.readBytes("files/ars_sample.xml")
-//            val feedString = feedBytes.decodeToString()
-//            val rssParser = provideRssParser()
-//            val rssChannel = rssParser.parse(feedString)
-//            val channel = Channel.fromRssChannel(rssChannel)
-//            channels = listOf(channel)
-//        }
-//    }
+    val builder = rememberDatabaseBuilder()
+    val database = remember { getRoomDatabase(builder) }
 
     val navController: NavHostController = rememberNavController()
     val snackbarHostState = remember { SnackbarHostState() }
 
     CompositionLocalProvider(
-        LocalChannelStore provides ChannelStore(provideRssParser()),
+        LocalChannelStore provides ChannelStore(database, provideRssParser()),
         LocalSearchApi provides provideSearchApi(),
         LocalNavHostController provides navController,
         LocalSnackbarHostState provides snackbarHostState,
     ) {
-        MaterialTheme {
+
+        val bookmarks by LocalChannelStore.current.bookmarks.collectAsStateWithLifecycle(emptyList())
+
+        MaterialTheme(
+            typography = AppTypography()
+        ) {
             Scaffold(
                 topBar = { AppBar() },
-                bottomBar = { AppBottomBar() },
+                bottomBar = { AppBottomBar(bookmarks.map { it.link }) },
                 snackbarHost = { SnackbarHost(hostState = LocalSnackbarHostState.current) },
                 content = { innerPadding ->
                     AppRouter(Modifier.padding(innerPadding))

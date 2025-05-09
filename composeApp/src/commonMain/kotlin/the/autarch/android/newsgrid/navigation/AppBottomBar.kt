@@ -1,34 +1,23 @@
 package the.autarch.android.newsgrid.navigation
 
-import androidx.compose.material3.BottomAppBar
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.navigation.NavDestination.Companion.hasRoute
 import androidx.navigation.compose.currentBackStackEntryAsState
-import newsgrid.composeapp.generated.resources.Res
-import newsgrid.composeapp.generated.resources.bookmark_border
-import org.jetbrains.compose.resources.painterResource
+import androidx.navigation.toRoute
 import the.autarch.android.newsgrid.LocalNavHostController
 
 @Composable
-fun AppBottomBar() {
+fun AppBottomBar(bookmarkIds: List<String>) {
 
     val navBackStackEntry by LocalNavHostController.current.currentBackStackEntryAsState()
-    val route = navBackStackEntry?.destination?.route
-    val root = route?.split("/")?.firstOrNull()
 
-    when (root) {
-        Routes.EntryDetails::class.qualifiedName ->
-            BottomAppBar(
-                actions = {
-                    IconButton({  }) {
-                        Icon(
-                            painterResource(Res.drawable.bookmark_border),
-                            contentDescription = "Save entry to bookmarks"
-                        )
-                    }
-                }
-            )
+    navBackStackEntry?.let { navBack ->
+
+        if (navBack.destination.hasRoute(Route.EntryDetails::class)) {
+            val route = navBackStackEntry!!.toRoute<Route.EntryDetails>()
+            val isBookmarked = bookmarkIds.contains(route.entryId)
+            EntryDetailBottomBar(route.entryId, isBookmarked)
+        }
     }
 }

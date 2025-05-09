@@ -8,6 +8,7 @@ plugins {
     alias(libs.plugins.composeCompiler)
     alias(libs.plugins.serialization)
     alias(libs.plugins.ksp)
+//    alias(libs.plugins.room)
     alias(libs.plugins.ktorfit)
 }
 
@@ -54,12 +55,37 @@ kotlin {
             implementation(libs.ktor.client.content.negotiation)
             implementation(libs.ktor.serialization.kotlinx.json)
             implementation(libs.navigation.compose)
+            implementation(libs.androidx.room.runtime)
+            implementation(libs.androidx.sqlite.bundled)
+//            androidx.sqlite:sqlite - The SQLite Driver interfaces
+
+            // Logging
+//            implementation(libs.kermit)
+//            implementation("io.github.aakira:napier:2.7.1")
             api(libs.logging)
+
+            implementation(libs.htmlconverter)
+            implementation(libs.ksoup)
         }
         desktopMain.dependencies {
             implementation(compose.desktop.currentOs)
             implementation(libs.kotlinx.coroutines.swing)
         }
+    }
+
+    dependencies {
+        add("kspAndroid", libs.androidx.room.compiler)
+        add("kspDesktop", libs.androidx.room.compiler)
+        add("kspIosSimulatorArm64", libs.androidx.room.compiler)
+        add("kspIosX64", libs.androidx.room.compiler)
+        add("kspIosArm64", libs.androidx.room.compiler)
+    }
+
+//    room {
+//        schemaDirectory("$projectDir/schemas")
+//    }
+    ksp {
+        arg("room.schemaLocation", "${projectDir}/schemas")
     }
 }
 

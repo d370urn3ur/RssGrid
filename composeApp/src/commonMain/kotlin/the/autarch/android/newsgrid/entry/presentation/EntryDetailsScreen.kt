@@ -1,51 +1,96 @@
 package the.autarch.android.newsgrid.entry.presentation
 
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.Button
 import androidx.compose.material3.ElevatedButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.unit.dp
-import the.autarch.android.newsgrid.entry.data.Entry
+import be.digitalia.compose.htmlconverter.htmlToAnnotatedString
+import kotlinx.coroutines.launch
+import the.autarch.android.newsgrid.JostRegularItalic
+import the.autarch.android.newsgrid.channel.data.LocalChannelStore
+import the.autarch.android.newsgrid.entry.data.EntryEntity
 
 @Composable
-fun EntryDetailsScreen(entry: Entry) {
+fun EntryDetailsScreen(entryId: String) {
 
-    Column {
+    val scope = rememberCoroutineScope()
+    val store = LocalChannelStore.current
+    var entry by remember { mutableStateOf<EntryEntity?>(null) }
+
+    LaunchedEffect(entryId) {
+        scope.launch {
+            entry = store.getEntry(entryId)
+        }
+    }
+
+    entry?.let { entry ->
 
         Column(
-            modifier = Modifier.padding(8.dp)
-                .verticalScroll(rememberScrollState()),
-            horizontalAlignment = Alignment.CenterHorizontally
+            modifier = Modifier.verticalScroll(rememberScrollState())
+                .padding(16.dp),
+            verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
 
-            Text(entry.title)
+            Text(
+                entry.title,
+                style = MaterialTheme.typography.titleLarge
+            )
 
-            entry.author?.let {
-                Text(it)
-            }
+            if (entry.author != null || entry.published != null) {
 
-            entry.pubDate?.let {
-                Text(it)
+                Column {
+
+                    entry.author?.let {
+                        Text(
+                            it,
+                            style = MaterialTheme.typography.labelMedium
+                        )
+                    }
+
+                    entry.published?.let {
+                        Text(
+                            it,
+                            style = MaterialTheme.typography.labelMedium
+                        )
+                    }
+                }
             }
 
             entry.description?.let {
-                Text(it)
+                Text(
+                    it,
+                    style = MaterialTheme.typography.bodyLarge.copy(fontFamily = JostRegularItalic())
+                )
             }
 
             entry.content?.let {
-                Text(it)
+                Text(
+                    remember { htmlToAnnotatedString(it) },
+                    style = MaterialTheme.typography.bodyLarge
+                )
             }
 
             val uriHandler = LocalUriHandler.current
-            ElevatedButton({
-                uriHandler.openUri(entry.link)
-            }) {
+            Button(
+                { uriHandler.openUri(entry.link) },
+                Modifier.align(Alignment.CenterHorizontally)
+            ) {
                 Text("Open in browser")
             }
         }
