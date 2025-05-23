@@ -1,6 +1,5 @@
 [versions]
-#agp = "8.10.0"
-agp = "8.9.2"
+agp = "8.10.0"
 android-compileSdk = "35"
 android-minSdk = "26"
 android-targetSdk = "35"
@@ -15,17 +14,19 @@ compose-multiplatform = "1.8.0-rc01"
 #junit = "4.13.2"
 htmlconverter = "1.0.3"
 kermit = "2.0.4"
-kotlin = "2.1.10"
-kotlinx-coroutines = "1.10.1"
+kmpaletteCore = "3.1.0"
+kotlin = "2.1.20"
+kotlinx-coroutines = "1.10.2"
 kotlinxSerializationJson = "1.8.0"
 ksoup = "0.2.3"
 ktor = "3.1.1"
 landscapistCoil3 = "2.4.7"
 logging = "2.0.3"
+materialKolor = "3.0.0-alpha04"
 roomGradlePlugin = "2.7.1"
 rssparser = "6.0.10"
-runtimeAndroid = "1.8.1"
-ksp = "2.1.10-1.0.31"
+runtimeAndroid = "1.8.2"
+ksp = "2.1.20-2.0.1"
 ktorfit = "2.5.1"
 navigationCompose = "2.9.0-alpha15"
 material3Android = "1.3.2"
@@ -40,13 +41,17 @@ sqliteBundled = "2.5.1"
 #androidx-espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "androidx-espresso-core" }
 #androidx-appcompat = { group = "androidx.appcompat", name = "appcompat", version.ref = "androidx-appcompat" }
 #androidx-constraintlayout = { group = "androidx.constraintlayout", name = "constraintlayout", version.ref = "androidx-constraintlayout" }
+androidx-material3 = { module = "androidx.compose.material3:material3", version.ref = "material3Android" }
 androidx-room-runtime = { module = "androidx.room:room-runtime", version.ref = "roomGradlePlugin" }
 androidx-room-compiler = { module = "androidx.room:room-compiler", version.ref = "roomGradlePlugin" }
 androidx-sqlite-bundled = { module = "androidx.sqlite:sqlite-bundled", version.ref = "sqliteBundled" }
 htmlconverter = { module = "be.digitalia.compose.htmlconverter:htmlconverter", version.ref = "htmlconverter" }
 #kermit = { module = "co.touchlab:kermit", version.ref = "kermit" }
+kmpalette-core = { module = "com.kmpalette:kmpalette-core", version.ref = "kmpaletteCore" }
+kmpalette-network = { module = "com.kmpalette:extensions-network", version.ref = "kmpaletteCore" }
 ksoup = { module = "com.fleeksoft.ksoup:ksoup-network", version.ref = "ksoup" }
 logging = { module = "com.diamondedge:logging", version.ref = "logging" }
+material-kolor = { module = "com.materialkolor:material-kolor", version.ref = "materialKolor" }
 navigation-compose = { module = "org.jetbrains.androidx.navigation:navigation-compose", version.ref = "navigationCompose" }
 androidx-activity-compose = { module = "androidx.activity:activity-compose", version.ref = "androidx-activityCompose" }
 androidx-lifecycle-viewmodel = { group = "org.jetbrains.androidx.lifecycle", name = "lifecycle-viewmodel", version.ref = "androidx-lifecycle" }

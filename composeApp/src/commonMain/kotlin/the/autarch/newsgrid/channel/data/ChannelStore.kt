@@ -1,0 +1,128 @@
+package the.autarch.newsgrid.channel.data
+
+import androidx.compose.runtime.staticCompositionLocalOf
+import com.diamondedge.logging.KmLogging
+import com.fleeksoft.ksoup.Ksoup
+import com.fleeksoft.ksoup.network.parseGetRequest
+import com.fleeksoft.ksoup.nodes.Document
+import com.prof18.rssparser.RssParser
+import com.prof18.rssparser.model.RssChannel
+import io.ktor.http.URLBuilder
+import io.ktor.http.set
+import kotlinx.coroutines.flow.first
+import the.autarch.newsgrid.bookmark.data.BookmarkEntity
+import the.autarch.newsgrid.channel.data.ChannelEntity
+import the.autarch.newsgrid.entry.data.EntryEntity
+import the.autarch.newsgrid.entry.data.fromRssItem
+import the.autarch.newsgrid.AppDatabase
+
+class ChannelStore(private val appDatabase: AppDatabase, private val parser: RssParser) {
+
+    val channels = appDatabase.getChannelDao().getAllWithEntriesAsFlow()
+    val bookmarks = appDatabase.getBookmarkDao().getAllAsFlow()
+
+    suspend fun refreshChannels() {
+        appDatabase.getChannelDao().getAllAsFlow().first().forEach { channel ->
+            updateChannel(channel)
+        }
+    }
+
+    suspend fun updateChannel(channel: ChannelEntity) {
+        KmLogging.info("RSS", "updating channels")
+        try {
+            val rssChannel = fetchChannelRss(channel.link)
+            updateEntries(channel, rssChannel)
+        } catch (t: Throwable) {
+            KmLogging.error("RSS", "updateChannel: ${channel.link}", t)
+        }
+    }
+
+    suspend fun addChannel(channelUrl: String) {
+        val rssChannel = fetchChannelRss(channelUrl)
+        var favicon = rssChannel.image?.url
+        if (favicon == null) {
+            favicon = fetchFavicon(rssChannel)
+        }
+        val channel = ChannelEntity.fromRssChannel(channelUrl, rssChannel, favicon)
+        appDatabase.getChannelDao().insert(channel)
+        updateEntries(channel, rssChannel)
+    }
+
+    suspend fun deleteChannels(channels: List<ChannelEntity>) {
+        appDatabase.getChannelDao().delete(*channels.toTypedArray())
+    }
+
+    private suspend fun fetchFavicon(rssChannel: RssChannel): String? {
+
+        val sourceUrl = rssChannel.link ?: return null
+        val toShorten = URLBuilder(sourceUrl).build()
+        val shortened = URLBuilder(protocol = toShorten.protocol, host = toShorten.host).build()
+
+        try {
+
+            val doc: Document = Ksoup.parseGetRequest(shortened.toString())
+            val iconLinks = doc.select("link[rel*=icon]")
+            if (iconLinks.isNotEmpty()) {
+                val favicon = iconLinks.firstOrNull()?.attribute("href")?.value
+                if (favicon != null) {
+                    return if (favicon.startsWith("http")) {
+                        favicon
+                    } else {
+                        URLBuilder(shortened.toString()).apply {
+                            set(path = favicon)
+                        }.build().toString()
+                    }
+                }
+            }
+            return null
+
+        } catch (t: Throwable) {
+            KmLogging.error("FAVICON", "Error parsing HTML:", t)
+            return null
+        }
+    }
+
+    private suspend fun fetchChannelRss(channelUrl: String): RssChannel =
+        parser.getRssChannel(channelUrl)
+
+    private suspend fun updateEntries(channel: ChannelEntity, rssChannel: RssChannel) {
+        val entries = rssChannel.items.toTypedArray()
+            .mapNotNull { item -> EntryEntity.fromRssItem(channel.link, item) }
+            .toTypedArray()
+        appDatabase.getEntryDao().insert(*entries)
+    }
+
+    suspend fun getEntry(entryId: String): EntryEntity? =
+        appDatabase.getEntryDao().entryForId(entryId)
+
+    suspend fun saveBookmark(entryId: String) {
+        val entry = appDatabase.getEntryDao().entryForId(entryId)
+        entry?.let {
+            appDatabase.getChannelDao().channelForId(entry.channelId)?.let { channel ->
+                val bookmark = BookmarkEntity(
+                    link = entry.link,
+                    title = entry.title,
+                    description = entry.description,
+                    content = entry.content,
+                    published = entry.published,
+                    author = entry.author,
+                    imageUrl = entry.imageUrl,
+                    source = entry.source,
+                    channelName = channel.title,
+                    channelImageUrl = channel.imageUrl
+                )
+                appDatabase.getBookmarkDao().insert(bookmark)
+            }
+        }
+    }
+
+    suspend fun removeBookmark(entryId: String) {
+        appDatabase.getBookmarkDao().bookmarkForId(entryId)?.let {
+            appDatabase.getBookmarkDao().delete(it)
+        }
+    }
+}
+
+val LocalChannelStore = staticCompositionLocalOf<ChannelStore> {
+    error("No CompositionLocal LocalChannelStore")
+}

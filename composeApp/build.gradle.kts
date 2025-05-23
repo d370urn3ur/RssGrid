@@ -38,6 +38,7 @@ kotlin {
         androidMain.dependencies {
             implementation(compose.preview)
             implementation(libs.androidx.activity.compose)
+            implementation(libs.androidx.material3)
         }
         commonMain.dependencies {
             implementation(compose.runtime)
@@ -63,6 +64,10 @@ kotlin {
 //            implementation(libs.kermit)
 //            implementation("io.github.aakira:napier:2.7.1")
             api(libs.logging)
+
+            implementation(libs.material.kolor)
+            implementation(libs.kmpalette.core)
+            implementation(libs.kmpalette.network)
 
             implementation(libs.htmlconverter)
             implementation(libs.ksoup)
@@ -90,7 +95,7 @@ kotlin {
 }
 
 android {
-    namespace = "the.autarch.android.newsgrid"
+    namespace = "the.autarch.newsgrid"
     compileSdk = libs.versions.android.compileSdk.get().toInt()
 
     defaultConfig {
@@ -124,12 +129,20 @@ dependencies {
 
 compose.desktop {
     application {
-        mainClass = "the.autarch.android.newsgrid.MainKt"
+        mainClass = "the.autarch.newsgrid.MainKt"
 
         nativeDistributions {
             targetFormats(TargetFormat.Dmg, TargetFormat.Msi, TargetFormat.Deb)
-            packageName = "the.autarch.android.newsgrid"
+            packageName = "the.autarch.newsgrid"
             packageVersion = "2.0.0"
+        }
+    }
+}
+
+tasks {
+    configureEach {
+        if (this.name.contains("kspDebugKotlinAndroid")) {
+            this.dependsOn("kspCommonMainKotlinMetadata")
         }
     }
 }
