@@ -8,6 +8,7 @@ import androidx.navigation.toRoute
 import the.autarch.newsgrid.AppContainer
 import the.autarch.newsgrid.LocalNavHostController
 import the.autarch.newsgrid.channel.data.ChannelEntity
+import the.autarch.newsgrid.bookmark.presentation.BookmarkDetailsScreen
 import the.autarch.newsgrid.entry.presentation.EntryDetailsScreen
 import the.autarch.newsgrid.search.presentation.SearchScreen
 
@@ -28,6 +29,10 @@ fun AppRouter(modifier: Modifier = Modifier, selectedChannels: List<ChannelEntit
         composable<Route.EntryDetails> { backStackEntry ->
             val detailRoute = backStackEntry.toRoute<Route.EntryDetails>()
             EntryDetailsScreen(detailRoute.entryId)
+        }
+        composable<Route.BookmarkDetails> { backStackEntry ->
+            val detailRoute = backStackEntry.toRoute<Route.BookmarkDetails>()
+            BookmarkDetailsScreen(detailRoute.bookmarkId)
         }
     }
 }

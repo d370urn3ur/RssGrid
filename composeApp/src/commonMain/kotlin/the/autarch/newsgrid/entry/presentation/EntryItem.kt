@@ -69,7 +69,6 @@ fun EntryItem(item: EntryEntity, channelTitle: String, resolvedBgColor: Color, i
             }
 
             if (isBookmarked) {
-
                 BookmarkIcon(
                     Modifier.padding(4.dp)
                         .align(Alignment.TopEnd)

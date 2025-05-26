@@ -19,18 +19,27 @@ import the.autarch.newsgrid.channel.data.ChannelEntity
     ],
 )
 data class EntryEntity(
-    @PrimaryKey val link: String,
+    @PrimaryKey override val link: String,
     @ColumnInfo(index = true) val channelId: String,
-    val title: String,
-    val description: String?,
-    val content: String?,
-    val published: String?,
+    override val title: String,
+    override val description: String?,
+    override val content: String?,
+    override val published: String?,
 //    val updated: String?,
-    val author: String?,
+    override val author: String?,
     val imageUrl: String?,
     val source: String?
-) {
+): Entry {
     companion object
+}
+
+interface Entry {
+    val link: String
+    val title: String
+    val description: String?
+    val content: String?
+    val published: String?
+    val author: String?
 }
 
 //@Serializable

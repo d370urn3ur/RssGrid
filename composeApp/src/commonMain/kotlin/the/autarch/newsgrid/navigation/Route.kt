@@ -12,4 +12,7 @@ sealed interface Route {
 
     @Serializable
     data class EntryDetails(val entryId: String, val channelTitle: String): Route
+
+    @Serializable
+    data class BookmarkDetails(val bookmarkId: String, val channelTitle: String): Route
 }

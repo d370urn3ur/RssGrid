@@ -72,6 +72,10 @@ fun AppBarTitle(navBackStackEntry: NavBackStackEntry?, isContextual: Boolean) {
                     val route = navBack.toRoute<Route.EntryDetails>()
                     Text(route.channelTitle)
                 }
+                it.hasRoute(Route.BookmarkDetails::class) -> {
+                    val route = navBack.toRoute<Route.BookmarkDetails>()
+                    Text(route.channelTitle)
+                }
             }
         }
     }
@@ -111,7 +115,7 @@ fun AppBarNavigationIcon(navBackStackEntry: NavBackStackEntry?, isContextual: Bo
                     IconButton({ onDeselectChannels() }) {
                         Icon(painterResource(Res.drawable.ic_cross_circle), contentDescription = "")
                     }
-                it.hasRoute(Route.Search::class) || it.hasRoute(Route.EntryDetails::class) ->
+                it.hasRoute(Route.Search::class) || it.hasRoute(Route.EntryDetails::class) || it.hasRoute(Route.BookmarkDetails::class) ->
                     IconButton({ navController.popBackStack() }) {
                         Icon(painterResource(Res.drawable.ic_arrow_back), contentDescription = "Navigate Back")
                     }

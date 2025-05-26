@@ -23,6 +23,7 @@ import be.digitalia.compose.htmlconverter.htmlToAnnotatedString
 import kotlinx.coroutines.launch
 import the.autarch.newsgrid.JostRegularItalic
 import the.autarch.newsgrid.channel.data.LocalChannelStore
+import the.autarch.newsgrid.entry.data.Entry
 import the.autarch.newsgrid.entry.data.EntryEntity
 
 @Composable
@@ -39,59 +40,64 @@ fun EntryDetailsScreen(entryId: String) {
     }
 
     entry?.let { entry ->
+        EntryDetailsScreenContent(entry)
+    }
+}
 
-        Column(
-            modifier = Modifier.verticalScroll(rememberScrollState())
-                .padding(16.dp),
-            verticalArrangement = Arrangement.spacedBy(16.dp)
-        ) {
+@Composable
+fun EntryDetailsScreenContent(entry: Entry) {
 
-            Text(
-                entry.title,
-                style = MaterialTheme.typography.titleLarge
-            )
+    Column(
+        modifier = Modifier.verticalScroll(rememberScrollState())
+            .padding(16.dp),
+        verticalArrangement = Arrangement.spacedBy(16.dp)
+    ) {
 
-            if (entry.author != null || entry.published != null) {
+        Text(
+            entry.title,
+            style = MaterialTheme.typography.titleLarge
+        )
 
-                Column {
+        if (entry.author != null || entry.published != null) {
 
-                    entry.author?.let {
-                        Text(
-                            it,
-                            style = MaterialTheme.typography.labelMedium
-                        )
-                    }
+            Column {
 
-                    entry.published?.let {
-                        Text(
-                            it,
-                            style = MaterialTheme.typography.labelMedium
-                        )
-                    }
+                entry.author?.let {
+                    Text(
+                        it,
+                        style = MaterialTheme.typography.labelMedium
+                    )
+                }
+
+                entry.published?.let {
+                    Text(
+                        it,
+                        style = MaterialTheme.typography.labelMedium
+                    )
                 }
             }
+        }
 
-            entry.description?.let {
-                Text(
-                    it,
-                    style = MaterialTheme.typography.bodyLarge.copy(fontFamily = JostRegularItalic())
-                )
-            }
+        entry.description?.let {
+            Text(
+                it,
+                style = MaterialTheme.typography.bodyLarge.copy(fontFamily = JostRegularItalic())
+            )
+        }
 
-            entry.content?.let {
-                Text(
-                    remember { htmlToAnnotatedString(it) },
-                    style = MaterialTheme.typography.bodyLarge
-                )
-            }
+        entry.content?.let {
+            Text(
+                remember { htmlToAnnotatedString(it) },
+                style = MaterialTheme.typography.bodyLarge
+            )
+        }
 
-            val uriHandler = LocalUriHandler.current
-            Button(
-                { uriHandler.openUri(entry.link) },
-                Modifier.align(Alignment.CenterHorizontally)
-            ) {
-                Text("Open in browser")
-            }
+        val uriHandler = LocalUriHandler.current
+        Button(
+            { uriHandler.openUri(entry.link) },
+            Modifier.align(Alignment.CenterHorizontally)
+        ) {
+            Text("Open in browser")
         }
     }
 }

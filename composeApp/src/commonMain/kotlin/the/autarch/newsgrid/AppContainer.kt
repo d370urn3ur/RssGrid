@@ -1,5 +1,6 @@
 package the.autarch.newsgrid
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.PrimaryTabRow
@@ -20,6 +21,7 @@ import the.autarch.newsgrid.channel.data.ChannelEntity
 import the.autarch.newsgrid.channel.data.LocalChannelStore
 import the.autarch.newsgrid.channel.presentation.ChannelItem
 import the.autarch.newsgrid.channel.presentation.ChannelsScreen
+import the.autarch.newsgrid.navigation.Route
 import the.autarch.newsgrid.navigation.TabIndex
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -31,6 +33,7 @@ fun AppContainer(selectedChannels: List<ChannelEntity>, onChannelSelected: (Chan
     val store = LocalChannelStore.current
     val channels by LocalChannelStore.current.channels.collectAsStateWithLifecycle(emptyList())
     val bookmarks by LocalChannelStore.current.bookmarks.collectAsStateWithLifecycle(emptyList())
+    val navController = LocalNavHostController.current
 
     LaunchedEffect(Unit) {
         store.refreshChannels()
@@ -51,7 +54,13 @@ fun AppContainer(selectedChannels: List<ChannelEntity>, onChannelSelected: (Chan
                 ChannelItem(channel, selectedChannels, onChannelSelected)
             }
             TabIndex.BOOKMARKS -> BookmarksScreen(bookmarks) { bookmark ->
-                BookmarkItem(bookmark, Modifier.animateItem())
+                BookmarkItem(
+                    bookmark,
+                    Modifier.animateItem()
+                        .clickable {
+                            navController.navigate(Route.BookmarkDetails(bookmark.link, bookmark.channelName))
+                        }
+                )
             }
         }
     }

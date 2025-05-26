@@ -95,6 +95,9 @@ class ChannelStore(private val appDatabase: AppDatabase, private val parser: Rss
     suspend fun getEntry(entryId: String): EntryEntity? =
         appDatabase.getEntryDao().entryForId(entryId)
 
+    suspend fun getBookmark(bookmarkId: String): BookmarkEntity? =
+        appDatabase.getBookmarkDao().bookmarkForId(bookmarkId)
+
     suspend fun saveBookmark(entryId: String) {
         val entry = appDatabase.getEntryDao().entryForId(entryId)
         entry?.let {

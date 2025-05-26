@@ -14,10 +14,17 @@ fun AppBottomBar(bookmarkIds: List<String>) {
 
     navBackStackEntry?.let { navBack ->
 
-        if (navBack.destination.hasRoute(Route.EntryDetails::class)) {
-            val route = navBackStackEntry!!.toRoute<Route.EntryDetails>()
-            val isBookmarked = bookmarkIds.contains(route.entryId)
-            EntryDetailBottomBar(route.entryId, isBookmarked)
+        when {
+            navBack.destination.hasRoute(Route.EntryDetails::class) == true -> {
+                val route = navBackStackEntry!!.toRoute<Route.EntryDetails>()
+                val isBookmarked = bookmarkIds.contains(route.entryId)
+                EntryDetailBottomBar(route.entryId, isBookmarked)
+            }
+            navBack.destination.hasRoute(Route.BookmarkDetails::class) == true -> {
+                val route = navBackStackEntry!!.toRoute<Route.BookmarkDetails>()
+                val isBookmarked = bookmarkIds.contains(route.bookmarkId)
+                EntryDetailBottomBar(route.bookmarkId, isBookmarked)
+            }
         }
     }
 }
