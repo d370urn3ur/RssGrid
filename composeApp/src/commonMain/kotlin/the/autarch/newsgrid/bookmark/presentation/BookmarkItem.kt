@@ -69,7 +69,7 @@ fun BookmarkItem(bookmark: BookmarkEntity, modifier: Modifier = Modifier) {
 
         Text(bookmark.title, style = MaterialTheme.typography.titleMedium)
 
-        bookmark.published?.let {
+        bookmark.pubDate?.let {
             Text(it, style = MaterialTheme.typography.bodySmall)
         }
     }

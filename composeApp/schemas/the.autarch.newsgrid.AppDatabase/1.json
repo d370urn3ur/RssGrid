@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 1,
-    "identityHash": "0693c254fc4672e2c44da4130107351a",
+    "identityHash": "5dd31b591f9d938ba8d3c2ca0e42c230",
     "entities": [
       {
         "tableName": "channel",
@@ -40,7 +40,7 @@
       },
       {
         "tableName": "entry",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`link` TEXT NOT NULL, `channelId` TEXT NOT NULL, `title` TEXT NOT NULL, `description` TEXT, `content` TEXT, `published` TEXT, `author` TEXT, `imageUrl` TEXT, `source` TEXT, PRIMARY KEY(`link`), FOREIGN KEY(`channelId`) REFERENCES `channel`(`link`) ON UPDATE CASCADE ON DELETE CASCADE )",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`link` TEXT NOT NULL, `channelId` TEXT NOT NULL, `title` TEXT NOT NULL, `description` TEXT, `content` TEXT, `pubDate` TEXT, `timestamp` INTEGER, `author` TEXT, `imageUrl` TEXT, `source` TEXT, PRIMARY KEY(`link`), FOREIGN KEY(`channelId`) REFERENCES `channel`(`link`) ON UPDATE CASCADE ON DELETE CASCADE )",
         "fields": [
           {
             "fieldPath": "link",
@@ -71,9 +71,14 @@
             "affinity": "TEXT"
           },
           {
-            "fieldPath": "published",
-            "columnName": "published",
+            "fieldPath": "pubDate",
+            "columnName": "pubDate",
             "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "timestamp",
+            "columnName": "timestamp",
+            "affinity": "INTEGER"
           },
           {
             "fieldPath": "author",
@@ -124,7 +129,7 @@
       },
       {
         "tableName": "bookmark",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`link` TEXT NOT NULL, `title` TEXT NOT NULL, `description` TEXT, `content` TEXT, `published` TEXT, `author` TEXT, `imageUrl` TEXT, `source` TEXT, `channelName` TEXT NOT NULL, `channelImageUrl` TEXT, PRIMARY KEY(`link`))",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`link` TEXT NOT NULL, `title` TEXT NOT NULL, `description` TEXT, `content` TEXT, `pubDate` TEXT, `timestamp` INTEGER, `author` TEXT, `imageUrl` TEXT, `source` TEXT, `channelName` TEXT NOT NULL, `channelImageUrl` TEXT, PRIMARY KEY(`link`))",
         "fields": [
           {
             "fieldPath": "link",
@@ -149,9 +154,14 @@
             "affinity": "TEXT"
           },
           {
-            "fieldPath": "published",
-            "columnName": "published",
+            "fieldPath": "pubDate",
+            "columnName": "pubDate",
             "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "timestamp",
+            "columnName": "timestamp",
+            "affinity": "INTEGER"
           },
           {
             "fieldPath": "author",
@@ -190,7 +200,7 @@
     ],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '0693c254fc4672e2c44da4130107351a')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '5dd31b591f9d938ba8d3c2ca0e42c230')"
     ]
   }
 }

@@ -2,6 +2,7 @@ package the.autarch.newsgrid.bookmark.data
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey
+import kotlinx.datetime.Instant
 import the.autarch.newsgrid.entry.data.Entry
 
 @Entity(
@@ -12,7 +13,8 @@ data class BookmarkEntity(
     override val title: String,
     override val description: String?,
     override val content: String?,
-    override val published: String?,
+    override val pubDate: String?,
+    override val timestamp: Instant?,
 //    val updated: String?,
     override val author: String?,
     val imageUrl: String?,

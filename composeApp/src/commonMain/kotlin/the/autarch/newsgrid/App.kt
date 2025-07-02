@@ -40,7 +40,7 @@ fun App() {
     var selectedChannels by remember { mutableStateOf<List<ChannelEntity>>(emptyList()) }
 
     CompositionLocalProvider(
-        LocalChannelStore provides ChannelStore(database, provideRssParser()),
+        LocalChannelStore provides ChannelStore(database, provideRssParser(), rememberDataStore()),
         LocalSearchApi provides provideSearchApi(),
         LocalNavHostController provides navController,
         LocalSnackbarHostState provides snackbarHostState,

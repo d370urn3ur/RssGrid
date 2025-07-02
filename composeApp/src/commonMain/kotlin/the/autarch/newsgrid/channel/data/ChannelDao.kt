@@ -13,8 +13,8 @@ import the.autarch.newsgrid.entry.data.EntryEntity
 @Dao
 interface ChannelDao {
 
-//    @Query("SELECT count(*) FROM channel")
-//    suspend fun count(): Int
+    @Query("SELECT * FROM channel")
+    suspend fun getAll(): List<ChannelEntity>
 
     @Query("SELECT * FROM channel")
     fun getAllAsFlow(): Flow<List<ChannelEntity>>

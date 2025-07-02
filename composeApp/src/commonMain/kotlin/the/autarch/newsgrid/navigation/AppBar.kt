@@ -10,6 +10,7 @@ import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.navigation.NavBackStackEntry
 import androidx.navigation.NavDestination.Companion.hasRoute
 import androidx.navigation.compose.currentBackStackEntryAsState
@@ -70,11 +71,19 @@ fun AppBarTitle(navBackStackEntry: NavBackStackEntry?, isContextual: Boolean) {
                 it.hasRoute(Route.Search::class) -> Text("Add a Channel")
                 it.hasRoute(Route.EntryDetails::class) -> {
                     val route = navBack.toRoute<Route.EntryDetails>()
-                    Text(route.channelTitle)
+                    Text(
+                        route.channelTitle,
+                        overflow = TextOverflow.Ellipsis,
+                        maxLines = 1
+                    )
                 }
                 it.hasRoute(Route.BookmarkDetails::class) -> {
                     val route = navBack.toRoute<Route.BookmarkDetails>()
-                    Text(route.channelTitle)
+                    Text(
+                        route.channelTitle,
+                        overflow = TextOverflow.Ellipsis,
+                        maxLines = 1
+                    )
                 }
             }
         }
@@ -115,7 +124,9 @@ fun AppBarNavigationIcon(navBackStackEntry: NavBackStackEntry?, isContextual: Bo
                     IconButton({ onDeselectChannels() }) {
                         Icon(painterResource(Res.drawable.ic_cross_circle), contentDescription = "")
                     }
-                it.hasRoute(Route.Search::class) || it.hasRoute(Route.EntryDetails::class) || it.hasRoute(Route.BookmarkDetails::class) ->
+                it.hasRoute(Route.Search::class)
+                || it.hasRoute(Route.EntryDetails::class)
+                || it.hasRoute(Route.BookmarkDetails::class) ->
                     IconButton({ navController.popBackStack() }) {
                         Icon(painterResource(Res.drawable.ic_arrow_back), contentDescription = "Navigate Back")
                     }

@@ -1,5 +1,5 @@
 [versions]
-agp = "8.10.0"
+agp = "8.10.1"
 android-compileSdk = "35"
 android-minSdk = "26"
 android-targetSdk = "35"
@@ -12,11 +12,13 @@ androidx-lifecycle = "2.8.4"
 #androidx-test-junit = "1.2.1"
 compose-multiplatform = "1.8.0-rc01"
 #junit = "4.13.2"
+datastore = "1.1.7"
 htmlconverter = "1.0.3"
 kermit = "2.0.4"
 kmpaletteCore = "3.1.0"
 kotlin = "2.1.20"
 kotlinx-coroutines = "1.10.2"
+kotlinxDatetime = "0.6.2"
 kotlinxSerializationJson = "1.8.0"
 ksoup = "0.2.3"
 ktor = "3.1.1"
@@ -41,6 +43,8 @@ sqliteBundled = "2.5.1"
 #androidx-espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "androidx-espresso-core" }
 #androidx-appcompat = { group = "androidx.appcompat", name = "appcompat", version.ref = "androidx-appcompat" }
 #androidx-constraintlayout = { group = "androidx.constraintlayout", name = "constraintlayout", version.ref = "androidx-constraintlayout" }
+androidx-datastore = { module = "androidx.datastore:datastore", version.ref = "datastore" }
+androidx-datastore-preferences = { module = "androidx.datastore:datastore-preferences", version.ref = "datastore" }
 androidx-material3 = { module = "androidx.compose.material3:material3", version.ref = "material3Android" }
 androidx-room-runtime = { module = "androidx.room:room-runtime", version.ref = "roomGradlePlugin" }
 androidx-room-compiler = { module = "androidx.room:room-compiler", version.ref = "roomGradlePlugin" }
@@ -49,6 +53,7 @@ htmlconverter = { module = "be.digitalia.compose.htmlconverter:htmlconverter", v
 #kermit = { module = "co.touchlab:kermit", version.ref = "kermit" }
 kmpalette-core = { module = "com.kmpalette:kmpalette-core", version.ref = "kmpaletteCore" }
 kmpalette-network = { module = "com.kmpalette:extensions-network", version.ref = "kmpaletteCore" }
+kotlinx-datetime = { module = "org.jetbrains.kotlinx:kotlinx-datetime", version.ref = "kotlinxDatetime" }
 ksoup = { module = "com.fleeksoft.ksoup:ksoup-network", version.ref = "ksoup" }
 logging = { module = "com.diamondedge:logging", version.ref = "logging" }
 material-kolor = { module = "com.materialkolor:material-kolor", version.ref = "materialKolor" }

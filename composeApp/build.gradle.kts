@@ -52,13 +52,15 @@ kotlin {
             implementation(libs.rssparser)
             implementation(libs.landscapist.coil3)
             implementation(libs.kotlinx.serialization.json)
+            implementation(libs.kotlinx.datetime)
             implementation(libs.ktorfit)
             implementation(libs.ktor.client.content.negotiation)
             implementation(libs.ktor.serialization.kotlinx.json)
             implementation(libs.navigation.compose)
             implementation(libs.androidx.room.runtime)
             implementation(libs.androidx.sqlite.bundled)
-//            androidx.sqlite:sqlite - The SQLite Driver interfaces
+            implementation(libs.androidx.datastore)
+            implementation(libs.androidx.datastore.preferences)
 
             // Logging
 //            implementation(libs.kermit)

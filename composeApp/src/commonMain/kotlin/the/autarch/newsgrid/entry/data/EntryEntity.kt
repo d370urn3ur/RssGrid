@@ -4,6 +4,8 @@ import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.ForeignKey
 import androidx.room.PrimaryKey
+import androidx.room.TypeConverter
+import kotlinx.datetime.Instant
 import the.autarch.newsgrid.channel.data.ChannelEntity
 
 @Entity(
@@ -24,7 +26,8 @@ data class EntryEntity(
     override val title: String,
     override val description: String?,
     override val content: String?,
-    override val published: String?,
+    override val pubDate: String?,
+    override val timestamp: Instant?,
 //    val updated: String?,
     override val author: String?,
     val imageUrl: String?,
@@ -33,13 +36,12 @@ data class EntryEntity(
     companion object
 }
 
-interface Entry {
-    val link: String
-    val title: String
-    val description: String?
-    val content: String?
-    val published: String?
-    val author: String?
+class InstantTypeConverter {
+    @TypeConverter
+    fun fromInstant(value: Instant?): Long? = value?.toEpochMilliseconds()
+
+    @TypeConverter
+    fun toInstant(value: Long?): Instant? = value?.let { Instant.fromEpochMilliseconds(it) }
 }
 
 //@Serializable

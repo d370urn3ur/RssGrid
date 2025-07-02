@@ -1,6 +1,9 @@
 package the.autarch.newsgrid.channel.data
 
 import androidx.compose.runtime.staticCompositionLocalOf
+import androidx.datastore.core.DataStore
+import androidx.datastore.preferences.core.Preferences
+import androidx.datastore.preferences.core.edit
 import com.diamondedge.logging.KmLogging
 import com.fleeksoft.ksoup.Ksoup
 import com.fleeksoft.ksoup.network.parseGetRequest
@@ -10,20 +13,43 @@ import com.prof18.rssparser.model.RssChannel
 import io.ktor.http.URLBuilder
 import io.ktor.http.set
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.map
+import kotlinx.datetime.Clock
+import kotlinx.datetime.DateTimeUnit
+import kotlinx.datetime.Instant
+import kotlinx.datetime.TimeZone
+import kotlinx.datetime.until
+import the.autarch.newsgrid.AppDatabase
+import the.autarch.newsgrid.LAST_UPDATE
 import the.autarch.newsgrid.bookmark.data.BookmarkEntity
-import the.autarch.newsgrid.channel.data.ChannelEntity
 import the.autarch.newsgrid.entry.data.EntryEntity
 import the.autarch.newsgrid.entry.data.fromRssItem
-import the.autarch.newsgrid.AppDatabase
 
-class ChannelStore(private val appDatabase: AppDatabase, private val parser: RssParser) {
+class ChannelStore(private val appDatabase: AppDatabase, private val parser: RssParser, private val prefs: DataStore<Preferences>) {
+
+    companion object {
+        const val REFRESH_THRESHOLD = 10
+    }
 
     val channels = appDatabase.getChannelDao().getAllWithEntriesAsFlow()
     val bookmarks = appDatabase.getBookmarkDao().getAllAsFlow()
 
-    suspend fun refreshChannels() {
-        appDatabase.getChannelDao().getAllAsFlow().first().forEach { channel ->
+    suspend fun refreshChannels(force: Boolean = false) {
+        if (!force) {
+            val lastUpdateMillis = prefs.data.map {
+                it[LAST_UPDATE] ?: Instant.DISTANT_PAST.toEpochMilliseconds()
+            }.first()
+            val lastUpdate = Instant.fromEpochMilliseconds(lastUpdateMillis)
+            val diffMinutes = lastUpdate.until(Clock.System.now(), DateTimeUnit.MINUTE, TimeZone.UTC)
+            if (diffMinutes < REFRESH_THRESHOLD) return
+        }
+
+        appDatabase.getChannelDao().getAll().forEach { channel ->
             updateChannel(channel)
+        }
+
+        prefs.edit { settings ->
+            settings[LAST_UPDATE] = Clock.System.now().toEpochMilliseconds()
         }
     }
 
@@ -107,7 +133,8 @@ class ChannelStore(private val appDatabase: AppDatabase, private val parser: Rss
                     title = entry.title,
                     description = entry.description,
                     content = entry.content,
-                    published = entry.published,
+                    pubDate = entry.pubDate,
+                    timestamp = entry.timestamp,
                     author = entry.author,
                     imageUrl = entry.imageUrl,
                     source = entry.source,

@@ -58,7 +58,7 @@ fun EntryDetailsScreenContent(entry: Entry) {
             style = MaterialTheme.typography.titleLarge
         )
 
-        if (entry.author != null || entry.published != null) {
+        if (entry.author != null || entry.pubDate != null) {
 
             Column {
 
@@ -69,7 +69,7 @@ fun EntryDetailsScreenContent(entry: Entry) {
                     )
                 }
 
-                entry.published?.let {
+                entry.pubDate?.let {
                     Text(
                         it,
                         style = MaterialTheme.typography.labelMedium
