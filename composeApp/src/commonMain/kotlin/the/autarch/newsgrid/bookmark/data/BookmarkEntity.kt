@@ -4,11 +4,12 @@ import androidx.room.Entity
 import androidx.room.PrimaryKey
 import kotlinx.datetime.Instant
 import the.autarch.newsgrid.entry.data.Entry
+import kotlin.time.ExperimentalTime
 
 @Entity(
     tableName = "bookmark"
 )
-data class BookmarkEntity(
+data class BookmarkEntity constructor(
     @PrimaryKey override val link: String,
     override val title: String,
     override val description: String?,
