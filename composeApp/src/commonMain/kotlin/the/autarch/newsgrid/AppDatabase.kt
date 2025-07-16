@@ -5,7 +5,6 @@ import androidx.room.ConstructedBy
 import androidx.room.Database
 import androidx.room.RoomDatabase
 import androidx.room.RoomDatabaseConstructor
-import androidx.room.TypeConverters
 import androidx.sqlite.driver.bundled.BundledSQLiteDriver
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO
@@ -15,7 +14,6 @@ import the.autarch.newsgrid.channel.data.ChannelDao
 import the.autarch.newsgrid.channel.data.ChannelEntity
 import the.autarch.newsgrid.entry.data.EntryEntity
 import the.autarch.newsgrid.entry.data.EntryDao
-import the.autarch.newsgrid.entry.data.InstantTypeConverter
 
 @Database(
     entities = [
@@ -26,7 +24,6 @@ import the.autarch.newsgrid.entry.data.InstantTypeConverter
     version = 1
 )
 @ConstructedBy(AppDatabaseConstructor::class)
-@TypeConverters(InstantTypeConverter::class)
 abstract class AppDatabase : RoomDatabase() {
     abstract fun getChannelDao(): ChannelDao
     abstract fun getEntryDao(): EntryDao

@@ -1,6 +1,5 @@
 package the.autarch.newsgrid.entry.data
 
-import kotlinx.datetime.Instant
 import kotlinx.datetime.format.DateTimeComponents
 import kotlinx.datetime.format.FormatStringsInDatetimeFormats
 
@@ -10,7 +9,7 @@ interface Entry {
     val description: String?
     val content: String?
     val pubDate: String?
-    val timestamp: Instant?
+    val timestamp: Long?
     val author: String?
 
     companion object {

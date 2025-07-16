@@ -14,9 +14,7 @@ import io.ktor.http.URLBuilder
 import io.ktor.http.set
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
-import kotlinx.datetime.Clock
 import kotlinx.datetime.DateTimeUnit
-import kotlinx.datetime.Instant
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.until
 import the.autarch.newsgrid.AppDatabase
@@ -24,7 +22,11 @@ import the.autarch.newsgrid.LAST_UPDATE
 import the.autarch.newsgrid.bookmark.data.BookmarkEntity
 import the.autarch.newsgrid.entry.data.EntryEntity
 import the.autarch.newsgrid.entry.data.fromRssItem
+import kotlin.time.Clock
+import kotlin.time.ExperimentalTime
+import kotlin.time.Instant
 
+@OptIn(ExperimentalTime::class)
 class ChannelStore(private val appDatabase: AppDatabase, private val parser: RssParser, private val prefs: DataStore<Preferences>) {
 
     companion object {

@@ -27,21 +27,13 @@ data class EntryEntity(
     override val description: String?,
     override val content: String?,
     override val pubDate: String?,
-    override val timestamp: Instant?,
+    override val timestamp: Long?,
 //    val updated: String?,
     override val author: String?,
     val imageUrl: String?,
     val source: String?
 ): Entry {
     companion object
-}
-
-class InstantTypeConverter {
-    @TypeConverter
-    fun fromInstant(value: Instant?): Long? = value?.toEpochMilliseconds()
-
-    @TypeConverter
-    fun toInstant(value: Long?): Instant? = value?.let { Instant.fromEpochMilliseconds(it) }
 }
 
 //@Serializable

@@ -1,5 +1,7 @@
 import org.jetbrains.compose.desktop.application.dsl.TargetFormat
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+import java.io.FileInputStream
+import java.util.Properties
 
 plugins {
     alias(libs.plugins.kotlinMultiplatform)
@@ -96,6 +98,12 @@ kotlin {
     }
 }
 
+val keystoreProperties = Properties()
+val keystorePropertiesFile = rootProject.file("key.properties")
+if (keystorePropertiesFile.exists()) {
+    keystoreProperties.load(FileInputStream(keystorePropertiesFile))
+}
+
 android {
     namespace = "the.autarch.newsgrid"
     compileSdk = libs.versions.android.compileSdk.get().toInt()
@@ -104,8 +112,16 @@ android {
         applicationId = "the.autarch.android.newsgrid"
         minSdk = libs.versions.android.minSdk.get().toInt()
         targetSdk = libs.versions.android.targetSdk.get().toInt()
-        versionCode = 5
-        versionName = "2.0.0"
+        versionCode = 7
+        versionName = "2.0.2"
+    }
+    signingConfigs {
+        create("release") {
+            keyAlias = keystoreProperties["keyAlias"] as? String
+            keyPassword = keystoreProperties["keyPassword"] as? String
+            storeFile = if (keystoreProperties["storeFile"] as? String != null) file(keystoreProperties["storeFile"] as String) else null
+            storePassword = keystoreProperties["storePassword"] as? String
+        }
     }
     packaging {
         resources {
@@ -136,7 +152,7 @@ compose.desktop {
         nativeDistributions {
             targetFormats(TargetFormat.Dmg, TargetFormat.Msi, TargetFormat.Deb)
             packageName = "the.autarch.newsgrid"
-            packageVersion = "2.0.0"
+            packageVersion = "2.0.2"
         }
     }
 }

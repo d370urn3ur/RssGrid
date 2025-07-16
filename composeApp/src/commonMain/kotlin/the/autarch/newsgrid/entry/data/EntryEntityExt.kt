@@ -1,8 +1,10 @@
 package the.autarch.newsgrid.entry.data
 
 import com.prof18.rssparser.model.RssItem
-import kotlinx.datetime.Instant
+import kotlin.time.ExperimentalTime
+import kotlin.time.Instant
 
+@OptIn(ExperimentalTime::class)
 fun EntryEntity.Companion.fromRssItem(channelId: String, rssItem: RssItem): EntryEntity? {
     return EntryEntity(
         link = rssItem.link ?: return null,
@@ -10,7 +12,7 @@ fun EntryEntity.Companion.fromRssItem(channelId: String, rssItem: RssItem): Entr
         title = rssItem.title ?: return null,
         author = rssItem.author,
         pubDate = rssItem.pubDate,
-        timestamp = Entry.parseTimestamp(rssItem.pubDate),
+        timestamp = EntryEntity.parseTimestamp(rssItem.pubDate)?.toEpochMilliseconds(),
         description = rssItem.description,
         content = rssItem.content,
         imageUrl = rssItem.image,
@@ -18,11 +20,12 @@ fun EntryEntity.Companion.fromRssItem(channelId: String, rssItem: RssItem): Entr
     )
 }
 
-fun Entry.Companion.parseTimestamp(pubDate: String?): Instant? {
+@OptIn(ExperimentalTime::class)
+fun EntryEntity.Companion.parseTimestamp(pubDate: String?): Instant? {
 
     val pubDate = pubDate ?: return null
 
-    var timestamp = try {
+    val timestamp = try {
         Instant.parse(pubDate)
     } catch (t: Throwable) {
         null
@@ -32,7 +35,7 @@ fun Entry.Companion.parseTimestamp(pubDate: String?): Instant? {
         return timestamp
     }
 
-    for (formatter in formatters) {
+    for (formatter in Entry.formatters) {
         try {
             return formatter.parse(pubDate).toInstantUsingOffset()
         } catch (_: Throwable) {}
