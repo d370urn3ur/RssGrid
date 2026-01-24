@@ -10,8 +10,6 @@ plugins {
     alias(libs.plugins.composeCompiler)
     alias(libs.plugins.serialization)
     alias(libs.plugins.ksp)
-//    alias(libs.plugins.room)
-    alias(libs.plugins.ktorfit)
 }
 
 kotlin {
@@ -55,7 +53,6 @@ kotlin {
             implementation(libs.landscapist.coil3)
             implementation(libs.kotlinx.serialization.json)
             implementation(libs.kotlinx.datetime)
-            implementation(libs.ktorfit)
             implementation(libs.ktor.client.content.negotiation)
             implementation(libs.ktor.serialization.kotlinx.json)
             implementation(libs.navigation.compose)
