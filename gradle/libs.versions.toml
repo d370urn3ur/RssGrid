@@ -1,20 +1,15 @@
 [versions]
-agp = "8.11.1"
+agp = "9.0.0"
 android-compileSdk = "36"
 android-minSdk = "26"
 android-targetSdk = "36"
 androidx-activityCompose = "1.12.2"
-#androidx-appcompat = "1.7.0"
-#androidx-constraintlayout = "2.2.1"
-#androidx-core-ktx = "1.15.0"
-#androidx-espresso-core = "3.6.1"
 androidx-lifecycle = "2.9.6"
-#androidx-test-junit = "1.2.1"
-compose-multiplatform = "1.8.2"
-#junit = "4.13.2"
+componentsResources = "1.10.0"
+compose-multiplatform = "1.10.0"
 datastore = "1.2.0"
+foundation = "1.10.0"
 htmlconverter = "1.1.0"
-kermit = "2.0.4"
 kmpaletteCore = "3.1.0"
 kotlin = "2.3.0"
 kotlinx-coroutines = "1.10.2"
@@ -24,38 +19,35 @@ ksoup = "0.2.5"
 ktor = "3.4.0"
 landscapistCoil3 = "2.8.3"
 logging = "2.1.0"
+material3 = "1.9.0"
 materialKolor = "4.1.0"
 room = "2.8.4"
 rssparser = "6.1.2"
-runtimeAndroid = "1.10.1"
+#runtimeAndroid = "1.10.1"
 ksp = "2.3.4"
 navigationCompose = "2.9.1"
 material3Android = "1.4.0"
+runtime = "1.10.0"
 sqlite = "2.6.2"
+uiToolingPreview = "1.10.0"
 
 [libraries]
-#kotlin-test = { module = "org.jetbrains.kotlin:kotlin-test", version.ref = "kotlin" }
-#kotlin-test-junit = { module = "org.jetbrains.kotlin:kotlin-test-junit", version.ref = "kotlin" }
-#junit = { group = "junit", name = "junit", version.ref = "junit" }
-#androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "androidx-core-ktx" }
-#androidx-test-junit = { group = "androidx.test.ext", name = "junit", version.ref = "androidx-test-junit" }
-#androidx-espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "androidx-espresso-core" }
-#androidx-appcompat = { group = "androidx.appcompat", name = "appcompat", version.ref = "androidx-appcompat" }
-#androidx-constraintlayout = { group = "androidx.constraintlayout", name = "constraintlayout", version.ref = "androidx-constraintlayout" }
 androidx-datastore = { module = "androidx.datastore:datastore", version.ref = "datastore" }
 androidx-datastore-preferences = { module = "androidx.datastore:datastore-preferences", version.ref = "datastore" }
 androidx-material3 = { module = "androidx.compose.material3:material3", version.ref = "material3Android" }
 androidx-room-runtime = { module = "androidx.room:room-runtime", version.ref = "room" }
 androidx-room-compiler = { module = "androidx.room:room-compiler", version.ref = "room" }
 androidx-sqlite-bundled = { module = "androidx.sqlite:sqlite-bundled", version.ref = "sqlite" }
+components-resources = { module = "org.jetbrains.compose.components:components-resources", version.ref = "componentsResources" }
+foundation = { module = "org.jetbrains.compose.foundation:foundation", version.ref = "foundation" }
 htmlconverter = { module = "be.digitalia.compose.htmlconverter:htmlconverter", version.ref = "htmlconverter" }
-#kermit = { module = "co.touchlab:kermit", version.ref = "kermit" }
 kmpalette-core = { module = "com.kmpalette:kmpalette-core", version.ref = "kmpaletteCore" }
 kmpalette-network = { module = "com.kmpalette:extensions-network", version.ref = "kmpaletteCore" }
 kotlinx-datetime = { module = "org.jetbrains.kotlinx:kotlinx-datetime", version.ref = "kotlinxDatetime" }
 ksoup = { module = "com.fleeksoft.ksoup:ksoup-network", version.ref = "ksoup" }
 logging = { module = "com.diamondedge:logging", version.ref = "logging" }
 material-kolor = { module = "com.materialkolor:material-kolor", version.ref = "materialKolor" }
+material3 = { module = "org.jetbrains.compose.material3:material3", version.ref = "material3" }
 navigation-compose = { module = "org.jetbrains.androidx.navigation:navigation-compose", version.ref = "navigationCompose" }
 androidx-activity-compose = { module = "androidx.activity:activity-compose", version.ref = "androidx-activityCompose" }
 androidx-lifecycle-viewmodel = { group = "org.jetbrains.androidx.lifecycle", name = "lifecycle-viewmodel", version.ref = "androidx-lifecycle" }
@@ -66,10 +58,14 @@ ktor-client-content-negotiation = { module = "io.ktor:ktor-client-content-negoti
 ktor-serialization-kotlinx-json = { module = "io.ktor:ktor-serialization-kotlinx-json", version.ref = "ktor" }
 landscapist-coil3 = { module = "com.github.skydoves:landscapist-coil3", version.ref = "landscapistCoil3" }
 rssparser = { module = "com.prof18.rssparser:rssparser", version.ref = "rssparser" }
-androidx-runtime-android = { group = "androidx.compose.runtime", name = "runtime-android", version.ref = "runtimeAndroid" }
-androidx-material3-android = { group = "androidx.compose.material3", name = "material3-android", version.ref = "material3Android" }
+runtime = { module = "org.jetbrains.compose.runtime:runtime", version.ref = "runtime" }
+ui = { module = "org.jetbrains.compose.ui:ui", version.ref = "uiToolingPreview" }
+ui-tooling-preview = { module = "org.jetbrains.compose.ui:ui-tooling-preview", version.ref = "uiToolingPreview" }
+#androidx-runtime-android = { group = "androidx.compose.runtime", name = "runtime-android", version.ref = "runtimeAndroid" }
+#androidx-material3-android = { group = "androidx.compose.material3", name = "material3-android", version.ref = "material3Android" }
 
 [plugins]
+androidMultiplatformLibrary = { id = "com.android.kotlin.multiplatform.library", version.ref = "agp" }
 kotlinAndroid = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
 androidApplication = { id = "com.android.application", version.ref = "agp" }
 androidLibrary = { id = "com.android.library", version.ref = "agp" }

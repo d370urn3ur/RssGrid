@@ -4,7 +4,6 @@ import java.io.FileInputStream
 import java.util.Properties
 
 plugins {
-    alias(libs.plugins.kotlinAndroid)
     alias(libs.plugins.androidApplication)
     alias(libs.plugins.composeMultiplatform)
     alias(libs.plugins.composeCompiler)
@@ -20,7 +19,7 @@ kotlin {
 
     dependencies {
         implementation(projects.composeApp)
-        implementation(compose.preview)
+        implementation(libs.ui.tooling.preview)
         implementation(libs.androidx.activity.compose)
         implementation(libs.androidx.material3)
     }

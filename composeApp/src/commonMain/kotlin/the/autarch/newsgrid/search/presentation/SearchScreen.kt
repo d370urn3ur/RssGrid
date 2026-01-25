@@ -31,6 +31,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import kotlinx.coroutines.launch
@@ -111,7 +112,7 @@ fun SearchScreen() {
                 CircularProgressIndicator()
             }
 
-        } else {
+        } else if (searchResults.isNotEmpty()) {
 
             LazyColumn(
                 verticalArrangement = Arrangement.spacedBy(8.dp)
@@ -122,6 +123,13 @@ fun SearchScreen() {
                     }
                 }
             }
+
+        } else {
+
+            Text(
+                "Search by domain. \n Ex: arstechnica.com, slashdot.org, cnn.com",
+                textAlign = TextAlign.Center
+            )
         }
 
         showSearchResultDetailsDialog?.let {

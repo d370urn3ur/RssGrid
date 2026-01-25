@@ -13,10 +13,10 @@ import org.jetbrains.compose.resources.Font
 @Composable
 fun AppTypography() = Typography().run {
 
-    val jb = JostBold()
-    val j = JostRegular()
-    val ji = JostRegularItalic()
-    val cg = CormorantGaramondRegular()
+    val jb = jostBold()
+    val j = jostRegular()
+    val ji = jostRegularItalic()
+    val cg = cormorantGaramondRegular()
 
     copy(
         titleLarge = titleLarge.copy(fontFamily = jb),
@@ -32,7 +32,7 @@ fun AppTypography() = Typography().run {
 }
 
 @Composable
-fun CormorantGaramondRegular() = FontFamily(
+fun cormorantGaramondRegular() = FontFamily(
     Font(
         Res.font.cormorant_garamond_variable,
         variationSettings = FontVariation.Settings(
@@ -42,7 +42,7 @@ fun CormorantGaramondRegular() = FontFamily(
 )
 
 @Composable
-fun JostRegular() = FontFamily(
+fun jostRegular() = FontFamily(
     Font(
         Res.font.jost_variable,
         variationSettings = FontVariation.Settings(
@@ -52,7 +52,7 @@ fun JostRegular() = FontFamily(
 )
 
 @Composable
-fun JostBold() = FontFamily(
+fun jostBold() = FontFamily(
     Font(
         Res.font.jost_variable,
         variationSettings = FontVariation.Settings(
@@ -62,7 +62,7 @@ fun JostBold() = FontFamily(
 )
 
 @Composable
-fun JostRegularItalic() = FontFamily(
+fun jostRegularItalic() = FontFamily(
     Font(
         Res.font.jost_italic_variable,
         variationSettings = FontVariation.Settings(
