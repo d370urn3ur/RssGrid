@@ -53,7 +53,10 @@ fun AppContainer(selectedChannels: List<ChannelEntity>, onChannelSelected: (Chan
             }
         }
         when (tabIndex) {
-            TabIndex.CHANNELS -> ChannelsScreen(channels) { channel ->
+            TabIndex.CHANNELS -> ChannelsScreen(
+                channels,
+                onNavigateToRoute = { navController.navigate(it) }
+            ) { channel ->
                 ChannelItem(channel, selectedChannels, onChannelSelected)
             }
             TabIndex.BOOKMARKS -> BookmarksScreen(bookmarks) { bookmark ->

@@ -1,11 +1,9 @@
 import org.jetbrains.compose.desktop.application.dsl.TargetFormat
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
-import java.io.FileInputStream
-import java.util.Properties
 
 plugins {
     alias(libs.plugins.kotlinMultiplatform)
-    alias(libs.plugins.androidApplication)
+    alias(libs.plugins.androidMultiplatformLibrary)
     alias(libs.plugins.composeMultiplatform)
     alias(libs.plugins.composeCompiler)
     alias(libs.plugins.serialization)
@@ -18,9 +16,15 @@ room {
 }
 
 kotlin {
-    androidTarget {
+
+    androidLibrary {
+        namespace = "the.autarch.newsgrid.composelibrary"
+        compileSdk = libs.versions.android.compileSdk.get().toInt()
         compilerOptions {
-            jvmTarget.set(JvmTarget.JVM_11)
+            jvmTarget.set(JvmTarget.JVM_21)
+        }
+        androidResources {
+            enable = true
         }
     }
 
@@ -38,20 +42,16 @@ kotlin {
     jvm("desktop")
 
     sourceSets {
+
         val desktopMain by getting
 
-        androidMain.dependencies {
-            implementation(compose.preview)
-            implementation(libs.androidx.activity.compose)
-            implementation(libs.androidx.material3)
-        }
         commonMain.dependencies {
-            implementation(compose.runtime)
-            implementation(compose.foundation)
-            implementation(compose.material3)
-            implementation(compose.ui)
-            implementation(compose.components.resources)
-            implementation(compose.components.uiToolingPreview)
+            implementation(libs.runtime)
+            implementation(libs.foundation)
+            implementation(libs.material3)
+            implementation(libs.ui)
+            implementation(libs.components.resources)
+            implementation(libs.ui.tooling.preview)
             implementation(libs.androidx.lifecycle.viewmodel)
             implementation(libs.androidx.lifecycle.runtime.compose)
             implementation(libs.rssparser)
@@ -85,51 +85,9 @@ kotlin {
     }
 }
 
-val keystoreProperties = Properties()
-val keystorePropertiesFile = rootProject.file("key.properties")
-if (keystorePropertiesFile.exists()) {
-    keystoreProperties.load(FileInputStream(keystorePropertiesFile))
-}
-
-android {
-    namespace = "the.autarch.newsgrid"
-    compileSdk = libs.versions.android.compileSdk.get().toInt()
-
-    defaultConfig {
-        applicationId = "the.autarch.android.newsgrid"
-        minSdk = libs.versions.android.minSdk.get().toInt()
-        targetSdk = libs.versions.android.targetSdk.get().toInt()
-        versionCode = 7
-        versionName = "2.0.2"
-    }
-    signingConfigs {
-        create("release") {
-            keyAlias = keystoreProperties["keyAlias"] as? String
-            keyPassword = keystoreProperties["keyPassword"] as? String
-            storeFile = if (keystoreProperties["storeFile"] as? String != null) file(keystoreProperties["storeFile"] as String) else null
-            storePassword = keystoreProperties["storePassword"] as? String
-        }
-    }
-    packaging {
-        resources {
-            excludes += "/META-INF/{AL2.0,LGPL2.1}"
-        }
-    }
-    buildTypes {
-        getByName("release") {
-            isMinifyEnabled = false
-        }
-    }
-    compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_11
-        targetCompatibility = JavaVersion.VERSION_11
-    }
-}
-
 dependencies {
-    implementation(libs.androidx.runtime.android)
-    implementation(libs.androidx.material3.android)
-    debugImplementation(compose.uiTooling)
+
+//    androidRuntimeClasspath(libs.compose.uiTooling)
 
     add("kspAndroid", libs.androidx.room.compiler)
     add("kspDesktop", libs.androidx.room.compiler)
