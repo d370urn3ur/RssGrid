@@ -16,7 +16,7 @@ datastore = "1.2.0"
 htmlconverter = "1.1.0"
 kermit = "2.0.4"
 kmpaletteCore = "3.1.0"
-kotlin = "2.2.0"
+kotlin = "2.3.0"
 kotlinx-coroutines = "1.10.2"
 kotlinxDatetime = "0.7.1"
 kotlinxSerializationJson = "1.10.0"
@@ -25,13 +25,13 @@ ktor = "3.4.0"
 landscapistCoil3 = "2.8.3"
 logging = "2.1.0"
 materialKolor = "4.1.0"
-roomGradlePlugin = "2.7.2"
+room = "2.8.4"
 rssparser = "6.1.2"
 runtimeAndroid = "1.10.1"
-ksp = "2.2.0-2.0.2"
+ksp = "2.3.4"
 navigationCompose = "2.9.1"
 material3Android = "1.4.0"
-sqliteBundled = "2.6.2"
+sqlite = "2.6.2"
 
 [libraries]
 #kotlin-test = { module = "org.jetbrains.kotlin:kotlin-test", version.ref = "kotlin" }
@@ -45,9 +45,9 @@ sqliteBundled = "2.6.2"
 androidx-datastore = { module = "androidx.datastore:datastore", version.ref = "datastore" }
 androidx-datastore-preferences = { module = "androidx.datastore:datastore-preferences", version.ref = "datastore" }
 androidx-material3 = { module = "androidx.compose.material3:material3", version.ref = "material3Android" }
-androidx-room-runtime = { module = "androidx.room:room-runtime", version.ref = "roomGradlePlugin" }
-androidx-room-compiler = { module = "androidx.room:room-compiler", version.ref = "roomGradlePlugin" }
-androidx-sqlite-bundled = { module = "androidx.sqlite:sqlite-bundled", version.ref = "sqliteBundled" }
+androidx-room-runtime = { module = "androidx.room:room-runtime", version.ref = "room" }
+androidx-room-compiler = { module = "androidx.room:room-compiler", version.ref = "room" }
+androidx-sqlite-bundled = { module = "androidx.sqlite:sqlite-bundled", version.ref = "sqlite" }
 htmlconverter = { module = "be.digitalia.compose.htmlconverter:htmlconverter", version.ref = "htmlconverter" }
 #kermit = { module = "co.touchlab:kermit", version.ref = "kermit" }
 kmpalette-core = { module = "com.kmpalette:kmpalette-core", version.ref = "kmpaletteCore" }
@@ -77,4 +77,4 @@ composeCompiler = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "k
 kotlinMultiplatform = { id = "org.jetbrains.kotlin.multiplatform", version.ref = "kotlin" }
 serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
 ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
-room = { id = 'androidx.room', version.ref = "roomGradlePlugin" }
+androidx-room = { id = 'androidx.room', version.ref = "room" }

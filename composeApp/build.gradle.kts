@@ -10,6 +10,11 @@ plugins {
     alias(libs.plugins.composeCompiler)
     alias(libs.plugins.serialization)
     alias(libs.plugins.ksp)
+    alias(libs.plugins.androidx.room)
+}
+
+room {
+    schemaDirectory("$projectDir/schemas")
 }
 
 kotlin {
@@ -78,21 +83,6 @@ kotlin {
             implementation(libs.kotlinx.coroutines.swing)
         }
     }
-
-    dependencies {
-        add("kspAndroid", libs.androidx.room.compiler)
-        add("kspDesktop", libs.androidx.room.compiler)
-        add("kspIosSimulatorArm64", libs.androidx.room.compiler)
-        add("kspIosX64", libs.androidx.room.compiler)
-        add("kspIosArm64", libs.androidx.room.compiler)
-    }
-
-//    room {
-//        schemaDirectory("$projectDir/schemas")
-//    }
-    ksp {
-        arg("room.schemaLocation", "${projectDir}/schemas")
-    }
 }
 
 val keystoreProperties = Properties()
@@ -140,6 +130,12 @@ dependencies {
     implementation(libs.androidx.runtime.android)
     implementation(libs.androidx.material3.android)
     debugImplementation(compose.uiTooling)
+
+    add("kspAndroid", libs.androidx.room.compiler)
+    add("kspDesktop", libs.androidx.room.compiler)
+    add("kspIosSimulatorArm64", libs.androidx.room.compiler)
+    add("kspIosX64", libs.androidx.room.compiler)
+    add("kspIosArm64", libs.androidx.room.compiler)
 }
 
 compose.desktop {
