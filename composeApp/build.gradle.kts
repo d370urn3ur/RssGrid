@@ -54,7 +54,6 @@ kotlin {
             implementation(libs.ui.tooling.preview)
             implementation(libs.androidx.lifecycle.viewmodel)
             implementation(libs.androidx.lifecycle.runtime.compose)
-            implementation(libs.rssparser)
             implementation(libs.landscapist.coil3)
             implementation(libs.kotlinx.serialization.json)
             implementation(libs.kotlinx.datetime)
@@ -65,6 +64,8 @@ kotlin {
             implementation(libs.androidx.sqlite.bundled)
             implementation(libs.androidx.datastore)
             implementation(libs.androidx.datastore.preferences)
+
+            implementation(libs.rssparser)
 
             // Logging
 //            implementation(libs.kermit)

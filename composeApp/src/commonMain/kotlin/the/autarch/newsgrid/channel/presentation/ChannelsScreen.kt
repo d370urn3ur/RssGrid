@@ -39,15 +39,13 @@ fun ChannelsScreen(
     val scope = rememberCoroutineScope()
     var isRefreshing by remember { mutableStateOf(false) }
 
-    Box(
-        modifier = Modifier.fillMaxSize(),
-        contentAlignment = Alignment.Center
-    ) {
+    Box(Modifier.fillMaxSize()) {
 
         if (channels.isEmpty()) {
 
             Column(
-                verticalArrangement = Arrangement.spacedBy(16.dp),
+                Modifier.fillMaxSize(),
+                verticalArrangement = Arrangement.Center,
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
 

@@ -40,8 +40,8 @@ android {
         applicationId = "the.autarch.android.newsgrid"
         minSdk = libs.versions.android.minSdk.get().toInt()
         targetSdk = libs.versions.android.targetSdk.get().toInt()
-        versionCode = 7
-        versionName = "2.0.2"
+        versionCode = 10
+        versionName = "2.0.3"
     }
     signingConfigs {
         create("release") {
@@ -58,7 +58,9 @@ android {
     }
     buildTypes {
         getByName("release") {
-            isMinifyEnabled = false
+            isMinifyEnabled = true
+            isShrinkResources = true
+            signingConfig = signingConfigs.getByName("release")
         }
     }
     compileOptions {
