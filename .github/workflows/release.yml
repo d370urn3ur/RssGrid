@@ -25,15 +25,15 @@ jobs:
 
       - name: Move files
         run: |
-          mv app/build/outputs/apk/github/release/androidApp-github-release-unsigned.apk app/build/outputs/app-release.apk
-          mv app/build/outputs/bundle/githubRelease/androidApp-github-release.aab app/build/outputs/app-release.aab
+          mv androidApp/build/outputs/apk/github/release/androidApp-github-release-unsigned.apk androidApp/build/outputs/app-release.apk
+          mv androidApp/build/outputs/bundle/githubRelease/androidApp-github-release.aab androidApp/build/outputs/app-release.aab
 
       - name: Sign App
         id: sign_app
         uses: ilharp/sign-android-release@v1.0.4
         with:
           buildToolsVersion: 36.1.0
-          releaseDir: app/build/outputs
+          releaseDir: androidApp/build/outputs
           signingKey: ${{ secrets.SIGNING_KEY }}
           keyAlias: ${{ secrets.ALIAS }}
           keyStorePassword: ${{ secrets.KEY_STORE_PASSWORD }}
@@ -52,7 +52,7 @@ jobs:
         id: create_release
         uses: ncipollo/release-action@v1.13.0
         with:
-          artifacts: "app/build/outputs/app-release-signed.aab, app/build/outputs/app-release-signed.apk"
+          artifacts: "androidApp/build/outputs/app-release-signed.aab, androidApp/build/outputs/app-release-signed.apk"
           body: ${{ steps.changelog.outputs.changelog }}
           name: Release ${{ github.event.head_commit.message }}
           token: ${{ secrets.GITHUB_TOKEN }}
