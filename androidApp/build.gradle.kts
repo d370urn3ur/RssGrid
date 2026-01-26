@@ -1,5 +1,6 @@
 import org.gradle.kotlin.dsl.kotlin
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+import org.jetbrains.kotlin.konan.properties.hasProperty
 import java.io.FileInputStream
 import java.util.Properties
 
@@ -25,10 +26,13 @@ kotlin {
     }
 }
 
-val keystoreProperties = Properties()
-val keystorePropertiesFile = rootProject.file("key.properties")
-if (keystorePropertiesFile.exists()) {
-    keystoreProperties.load(FileInputStream(keystorePropertiesFile))
+val keystoreProperties = try {
+    val keystorePropertiesFile = rootProject.file("keystore.properties")
+    Properties().apply {
+        load(FileInputStream(keystorePropertiesFile))
+    }
+} catch (_: Throwable) {
+    Properties()
 }
 
 android {
@@ -44,11 +48,17 @@ android {
         versionName = "2.0.3"
     }
     signingConfigs {
-        create("release") {
-            keyAlias = keystoreProperties["keyAlias"] as? String
-            keyPassword = keystoreProperties["keyPassword"] as? String
-            storeFile = if (keystoreProperties["storeFile"] as? String != null) file(keystoreProperties["storeFile"] as String) else null
+        val keystoreFile = if (keystoreProperties.hasProperty("storeFile")) {
+            val keystorePath = keystoreProperties["storeFile"] as String
+            file(System.getProperty("user.home") + File.separator + keystorePath)
+        } else {
+            file(System.getProperty("user.home"))
+        }
+        create("playstore") {
+            storeFile = keystoreFile
             storePassword = keystoreProperties["storePassword"] as? String
+            keyAlias = keystoreProperties["keyAlias"]  as? String
+            keyPassword = keystoreProperties["keyPassword"] as? String
         }
     }
     packaging {
@@ -56,11 +66,20 @@ android {
             excludes += "/META-INF/{AL2.0,LGPL2.1}"
         }
     }
+    flavorDimensions += "signing"
+    productFlavors {
+        create("github") {}
+        create("playstore") {}
+    }
     buildTypes {
-        getByName("release") {
-            isMinifyEnabled = true
+        release {
             isShrinkResources = true
-            signingConfig = signingConfigs.getByName("release")
+            isMinifyEnabled = true
+            proguardFiles(
+                getDefaultProguardFile("proguard-android-optimize.txt"),
+                "proguard-rules.pro"
+            )
+            productFlavors.getByName("playstore").signingConfig = signingConfigs.getByName("playstore")
         }
     }
     compileOptions {
