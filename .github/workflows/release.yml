@@ -37,7 +37,7 @@ jobs:
           signingKey: ${{ secrets.SIGNING_KEY }}
           keyAlias: ${{ secrets.ALIAS }}
           keyStorePassword: ${{ secrets.KEY_STORE_PASSWORD }}
-          keyPassword: ${{ secrets.KEY_PASSWORD }}
+          keyPassword: ${{ secrets.KEY_STORE_PASSWORD }}
 
       # - name: Build Changelog
       #   id: changelog
