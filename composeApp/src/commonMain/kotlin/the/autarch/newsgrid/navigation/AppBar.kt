@@ -10,6 +10,7 @@ import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.navigation.NavBackStackEntry
 import androidx.navigation.NavDestination.Companion.hasRoute
@@ -22,6 +23,7 @@ import newsgrid.composeapp.generated.resources.ic_arrow_back
 import newsgrid.composeapp.generated.resources.ic_cross_circle
 import newsgrid.composeapp.generated.resources.ic_delete
 import org.jetbrains.compose.resources.painterResource
+import org.jetbrains.compose.resources.stringResource
 import the.autarch.newsgrid.LocalNavHostController
 import the.autarch.newsgrid.channel.data.ChannelEntity
 import the.autarch.newsgrid.channel.data.LocalChannelStore
@@ -62,17 +64,17 @@ fun AppBarTitle(navBackStackEntry: NavBackStackEntry?, isContextual: Boolean) {
         navBack.destination.let {
             when {
                 it.hasRoute(Route.AppContainer::class) -> {
-                    if (isContextual) {
-                        Text("Edit Channels")
-                    } else {
-                        Text("NewsGrid")
-                    }
+                    Text(
+                        if (isContextual) "Edit Channels" else "RssGrid",
+                        fontWeight = FontWeight.Black
+                    )
                 }
                 it.hasRoute(Route.Search::class) -> Text("Add a Channel")
                 it.hasRoute(Route.EntryDetails::class) -> {
                     val route = navBack.toRoute<Route.EntryDetails>()
                     Text(
                         route.channelTitle,
+                        fontWeight = FontWeight.Black,
                         overflow = TextOverflow.Ellipsis,
                         maxLines = 1
                     )
@@ -81,6 +83,7 @@ fun AppBarTitle(navBackStackEntry: NavBackStackEntry?, isContextual: Boolean) {
                     val route = navBack.toRoute<Route.BookmarkDetails>()
                     Text(
                         route.channelTitle,
+                        fontWeight = FontWeight.Black,
                         overflow = TextOverflow.Ellipsis,
                         maxLines = 1
                     )

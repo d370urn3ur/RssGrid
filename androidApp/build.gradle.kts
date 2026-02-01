@@ -41,7 +41,7 @@ android {
     compileSdk = libs.versions.android.compileSdk.get().toInt()
 
     defaultConfig {
-        applicationId = "the.autarch.android.newsgrid"
+        applicationId = "the.autarch.rssgrid"
         minSdk = libs.versions.android.minSdk.get().toInt()
         targetSdk = libs.versions.android.targetSdk.get().toInt()
         versionCode = 10
@@ -68,8 +68,12 @@ android {
     }
     flavorDimensions += "signing"
     productFlavors {
-        create("github") {}
-        create("playstore") {}
+        create("github") {
+            dimension = "signing"
+        }
+        create("playstore") {
+            dimension = "signing"
+        }
     }
     buildTypes {
         release {

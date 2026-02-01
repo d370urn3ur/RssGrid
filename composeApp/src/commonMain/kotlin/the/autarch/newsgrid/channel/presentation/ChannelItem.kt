@@ -3,6 +3,7 @@ package the.autarch.newsgrid.channel.presentation
 import androidx.compose.animation.core.AnimationSpec
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
+import androidx.compose.foundation.basicMarquee
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -69,10 +70,12 @@ fun ChannelItem(feed: ChannelAndAllEntries, selectedChannels: List<ChannelEntity
             }
             Text(
                 channelTitle,
-                modifier = Modifier.clickable { scope.launch {
-                    entriesListState.animateScrollToItem(0)
-                } },
-                overflow = TextOverflow.Ellipsis,
+                modifier = Modifier
+                    .clickable { scope.launch {
+                        entriesListState.animateScrollToItem(0)
+                    } }
+                    .basicMarquee(),
+                overflow = TextOverflow.Visible,
                 maxLines = 1
             )
         }
@@ -109,7 +112,10 @@ fun ChannelItemIcon(channel: ChannelEntity?, isSelected: Boolean, onSelected: ()
         animationSpec = animSpec
     )
 
-    Box(modifier = Modifier.clickable { onSelected() }) {
+    Box(
+        modifier = Modifier.clickable { onSelected() },
+        contentAlignment = Alignment.Center
+    ) {
 
         Icon(
             painterResource(Res.drawable.ic_check_circle),

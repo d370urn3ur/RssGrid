@@ -64,7 +64,8 @@ fun EntryItem(item: EntryEntity, channelTitle: String, resolvedBgColor: Color, i
                 Text(
                     item.title,
                     overflow = TextOverflow.Ellipsis, maxLines = 3, minLines = 3,
-                    style = MaterialTheme.typography.labelSmall.copy(color = Color.White)
+//                    style = MaterialTheme.typography.labelSmall.copy(color = Color.White)
+                    style = MaterialTheme.typography.labelLarge.copy(color = Color.White)
                 )
             }
 
