@@ -36,8 +36,8 @@ fun AppBar(selectedChannels: List<ChannelEntity>, onDeselectChannels: () -> Unit
 
     val navBackStackEntry by LocalNavHostController.current.currentBackStackEntryAsState()
     val isContextual = selectedChannels.isNotEmpty()
-    val containerColor = if (isContextual) MaterialTheme.colorScheme.secondaryContainer else MaterialTheme.colorScheme.primaryContainer
-    val titleContentColor = if (isContextual) MaterialTheme.colorScheme.secondary else MaterialTheme.colorScheme.primary
+    val containerColor = if (isContextual) MaterialTheme.colorScheme.secondary else MaterialTheme.colorScheme.primaryContainer
+    val contentColor = if (isContextual) MaterialTheme.colorScheme.onSecondaryContainer else MaterialTheme.colorScheme.onPrimaryContainer
 
     val scope = rememberCoroutineScope()
     val store = LocalChannelStore.current
@@ -53,7 +53,9 @@ fun AppBar(selectedChannels: List<ChannelEntity>, onDeselectChannels: () -> Unit
         },
         colors = TopAppBarDefaults.topAppBarColors(
             containerColor = containerColor,
-            titleContentColor = titleContentColor,
+            navigationIconContentColor = contentColor,
+            titleContentColor = contentColor,
+            actionIconContentColor = contentColor
         ),
     )
 }

@@ -1,18 +1,19 @@
 package the.autarch.newsgrid
 
 import android.content.Context
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.remember
-import androidx.compose.ui.platform.LocalContext
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 
-@Composable
-actual fun rememberDataStore(): DataStore<Preferences> {
-    val context = LocalContext.current
-    return remember { createDataStore(context) }
+private lateinit var appContext: Context
+
+fun initPreferencesDataStore(context: Context) {
+    appContext = context.applicationContext
 }
 
-fun createDataStore(context: Context): DataStore<Preferences> = createDataStore(
-    producePath = { context.filesDir.resolve(dataStoreFileName).absolutePath }
-)
+fun getPreferencesDataStorePath(appContext: Context): String =
+    appContext.filesDir.resolve(dataStoreFileName).absolutePath
+
+actual fun createDataStore(): DataStore<Preferences> {
+    val path = getPreferencesDataStorePath(appContext)
+    return getPreferencesDataStore(path)
+}

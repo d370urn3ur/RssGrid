@@ -10,9 +10,12 @@ import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.Modifier
+import androidx.datastore.core.DataStore
+import androidx.datastore.preferences.core.Preferences
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
@@ -26,8 +29,17 @@ import the.autarch.newsgrid.navigation.AppRouter
 import the.autarch.newsgrid.search.api.LocalSearchApi
 import the.autarch.newsgrid.search.api.provideSearchApi
 
+var dataStore: DataStore<Preferences>? = null
+
 @Composable
 fun App() {
+
+    val dataStore: DataStore<Preferences> = remember {
+        if (dataStore == null) {
+            dataStore = createDataStore()
+        }
+        dataStore!!
+    }
 
     val builder = rememberDatabaseBuilder()
     val database = remember { getRoomDatabase(builder) }
@@ -40,7 +52,7 @@ fun App() {
     var selectedChannels by remember { mutableStateOf<List<ChannelEntity>>(emptyList()) }
 
     CompositionLocalProvider(
-        LocalChannelStore provides ChannelStore(database, provideRssParser(), rememberDataStore()),
+        LocalChannelStore provides ChannelStore(database, provideRssParser(), dataStore),
         LocalSearchApi provides provideSearchApi(),
         LocalNavHostController provides navController,
         LocalSnackbarHostState provides snackbarHostState,
