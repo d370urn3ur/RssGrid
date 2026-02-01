@@ -6,7 +6,9 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -51,7 +53,10 @@ fun SearchScreen() {
     var showSearchResultDetailsDialog by remember { mutableStateOf<SearchResult?>(null) }
 
     Column(
-        modifier = Modifier.padding(16.dp),
+        modifier = Modifier
+            .padding(top = 16.dp)
+            .padding(horizontal = 16.dp)
+            .imePadding(),
         verticalArrangement = Arrangement.spacedBy(16.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
@@ -79,6 +84,7 @@ fun SearchScreen() {
                 onValueChange = setSearchText,
                 modifier = Modifier.fillMaxWidth(),
                 keyboardOptions = KeyboardOptions(
+                    autoCorrectEnabled = false,
                     keyboardType = KeyboardType.Uri,
                     imeAction = ImeAction.Search
                 ),

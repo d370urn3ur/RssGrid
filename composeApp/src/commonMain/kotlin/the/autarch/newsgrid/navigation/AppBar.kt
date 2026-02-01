@@ -69,7 +69,12 @@ fun AppBarTitle(navBackStackEntry: NavBackStackEntry?, isContextual: Boolean) {
                         fontWeight = FontWeight.Black
                     )
                 }
-                it.hasRoute(Route.Search::class) -> Text("Add a Channel")
+                it.hasRoute(Route.Search::class) -> {
+                    Text(
+                        "Add a Channel",
+                        fontWeight = FontWeight.Black
+                    )
+                }
                 it.hasRoute(Route.EntryDetails::class) -> {
                     val route = navBack.toRoute<Route.EntryDetails>()
                     Text(
@@ -103,11 +108,17 @@ fun AppBarActions(navBackStackEntry: NavBackStackEntry?, isContextual: Boolean, 
             when {
                 it.hasRoute(Route.AppContainer::class) && isContextual -> {
                     IconButton({ onDelete() }) {
-                        Icon(painterResource(Res.drawable.ic_delete), contentDescription = "Delete selected channels")
+                        Icon(
+                            painterResource(Res.drawable.ic_delete),
+                            contentDescription = "Delete selected channels"
+                        )
                     }
                 }
                 it.hasRoute(Route.AppContainer::class) -> IconButton({ navController.navigate(Route.Search) }) {
-                    Icon(painterResource(Res.drawable.ic_add), contentDescription = "Add Channel")
+                    Icon(
+                        painterResource(Res.drawable.ic_add),
+                        contentDescription = "Add Channel"
+                    )
                 }
                 it.hasRoute(Route.Search::class) -> AppBarButtonImportChannel()
             }
