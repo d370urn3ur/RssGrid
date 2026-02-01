@@ -44,8 +44,8 @@ android {
         applicationId = "the.autarch.rssgrid"
         minSdk = libs.versions.android.minSdk.get().toInt()
         targetSdk = libs.versions.android.targetSdk.get().toInt()
-        versionCode = 10
-        versionName = "2.0.3"
+        versionCode = 1
+        versionName = "1.0.0"
     }
     signingConfigs {
         val keystoreFile = if (keystoreProperties.hasProperty("storeFile")) {
@@ -58,7 +58,7 @@ android {
             storeFile = keystoreFile
             storePassword = keystoreProperties["storePassword"] as? String
             keyAlias = keystoreProperties["keyAlias"]  as? String
-            keyPassword = keystoreProperties["keyPassword"] as? String
+            keyPassword = keystoreProperties["storePassword"] as? String
         }
     }
     packaging {

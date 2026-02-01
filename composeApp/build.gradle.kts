@@ -103,8 +103,8 @@ compose.desktop {
 
         nativeDistributions {
             targetFormats(TargetFormat.Dmg, TargetFormat.Msi, TargetFormat.Deb)
-            packageName = "the.autarch.newsgrid"
-            packageVersion = "2.0.2"
+            packageName = "the.autarch.rssgrid"
+            packageVersion = "1.0.0"
         }
     }
 }
