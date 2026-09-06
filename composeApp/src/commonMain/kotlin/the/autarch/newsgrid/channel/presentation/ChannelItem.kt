@@ -42,9 +42,15 @@ import the.autarch.newsgrid.channel.data.ChannelAndAllEntries
 import the.autarch.newsgrid.channel.data.ChannelEntity
 import the.autarch.newsgrid.channel.data.LocalChannelStore
 import the.autarch.newsgrid.entry.presentation.EntryItem
+import the.autarch.newsgrid.navigation.Route
 
 @Composable
-fun ChannelItem(feed: ChannelAndAllEntries, selectedChannels: List<ChannelEntity>, onChannelSelected: (ChannelEntity) -> Unit) {
+fun ChannelItem(
+    feed: ChannelAndAllEntries,
+    selectedChannels: List<ChannelEntity>,
+    onChannelSelected: (ChannelEntity) -> Unit,
+    onNavigateToRoute: (Route) -> Unit
+) {
 
     val channel = feed.channel
     val entries = feed.entries.sortedByDescending { it.timestamp }
@@ -85,7 +91,13 @@ fun ChannelItem(feed: ChannelAndAllEntries, selectedChannels: List<ChannelEntity
             horizontalArrangement = Arrangement.spacedBy(8.dp)
         ) {
             items(entries) { entry ->
-                EntryItem(entry, channelTitle, colorHint.color, bookmarkIds.contains(entry.link))
+                EntryItem(
+                    entry,
+                    channelTitle,
+                    colorHint.color,
+                    bookmarkIds.contains(entry.link),
+                    onNavigateToRoute
+                )
             }
         }
     }

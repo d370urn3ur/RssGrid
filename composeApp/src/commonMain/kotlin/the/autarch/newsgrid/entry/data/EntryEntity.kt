@@ -138,7 +138,7 @@ data class EntryEntity(
 //        }
 //
 //        // Take last
-//        // why last? dunno, on theguardian com last <media:content> image is com biggest
+//        // why last? dunno, on theguardian com last <media:content> image is the biggest
 //        return content?.lastOrNull?.url;
 //    }
 //

@@ -22,22 +22,26 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.skydoves.landscapist.ImageOptions
 import com.skydoves.landscapist.coil3.CoilImage
-import the.autarch.newsgrid.LocalNavHostController
 import the.autarch.newsgrid.bookmark.presentation.BookmarkIcon
 import the.autarch.newsgrid.entry.data.EntryEntity
 import the.autarch.newsgrid.navigation.Route
 
 @Composable
-fun EntryItem(item: EntryEntity, channelTitle: String, resolvedBgColor: Color, isBookmarked: Boolean) {
+fun EntryItem(
+    item: EntryEntity,
+    channelTitle: String,
+    resolvedBgColor: Color,
+    isBookmarked: Boolean,
+    onNavigateToRoute: (Route) -> Unit
+) {
 
-    val navController = LocalNavHostController.current
     val itemSize = 150.dp.let {
         Modifier.size(width = it, height = it)
     }
 
     Card(
         modifier = Modifier.clickable {
-            navController.navigate(Route.EntryDetails(item.link, channelTitle))
+            onNavigateToRoute(Route.EntryDetails(item.link, channelTitle))
         },
         shape = RoundedCornerShape(10.dp),
         elevation = CardDefaults.elevatedCardElevation(defaultElevation = 8.dp),

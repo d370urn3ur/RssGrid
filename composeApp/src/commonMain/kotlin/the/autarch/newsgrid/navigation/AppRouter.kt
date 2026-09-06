@@ -1,38 +1,53 @@
 package the.autarch.newsgrid.navigation
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.navigation.compose.NavHost
-import androidx.navigation.compose.composable
-import androidx.navigation.toRoute
+import androidx.navigation3.runtime.NavBackStack
+import androidx.navigation3.runtime.NavKey
+import androidx.navigation3.runtime.entryProvider
+import androidx.navigation3.ui.NavDisplay
 import the.autarch.newsgrid.AppContainer
-import the.autarch.newsgrid.LocalNavHostController
-import the.autarch.newsgrid.channel.data.ChannelEntity
 import the.autarch.newsgrid.bookmark.presentation.BookmarkDetailsScreen
+import the.autarch.newsgrid.channel.data.ChannelEntity
 import the.autarch.newsgrid.entry.presentation.EntryDetailsScreen
+import the.autarch.newsgrid.rememberAppContainerState
 import the.autarch.newsgrid.search.presentation.SearchScreen
 
 @Composable
-fun AppRouter(modifier: Modifier = Modifier, selectedChannels: List<ChannelEntity>, onSelectChannel: (ChannelEntity) -> Unit) {
+fun AppRouter(
+    backStack: NavBackStack<NavKey>,
+    modifier: Modifier = Modifier,
+    selectedChannels: List<ChannelEntity>,
+    onSelectChannel: (ChannelEntity) -> Unit
+) {
 
-    NavHost(
-        navController = LocalNavHostController.current,
-        startDestination = Route.AppContainer,
+    val containerState = rememberAppContainerState(
+        selectedChannels = selectedChannels,
+        onChannelSelected = onSelectChannel,
+        onNavigateToRoute = { route -> backStack.add(route) }
+    )
+
+    NavDisplay(
+        backStack = backStack,
         modifier = modifier,
-    ) {
-        composable<Route.AppContainer> {
-            AppContainer(selectedChannels, onSelectChannel)
+        onBack = { backStack.removeLastOrNull() },
+        entryProvider = entryProvider {
+            entry<Route.Main> { key ->
+                AppContainer(containerState)
+            }
+            entry<Route.Search> { key ->
+                SearchScreen()
+            }
+            entry<Route.EntryDetails> { key ->
+                EntryDetailsScreen(key.entryId)
+            }
+            entry<Route.BookmarkDetails> { key ->
+                BookmarkDetailsScreen(key.bookmarkId)
+            }
         }
-        composable<Route.Search> {
-            SearchScreen()
-        }
-        composable<Route.EntryDetails> { backStackEntry ->
-            val detailRoute = backStackEntry.toRoute<Route.EntryDetails>()
-            EntryDetailsScreen(detailRoute.entryId)
-        }
-        composable<Route.BookmarkDetails> { backStackEntry ->
-            val detailRoute = backStackEntry.toRoute<Route.BookmarkDetails>()
-            BookmarkDetailsScreen(detailRoute.bookmarkId)
-        }
-    }
+    )
 }

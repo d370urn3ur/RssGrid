@@ -21,10 +21,19 @@ import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.unit.dp
 import be.digitalia.compose.htmlconverter.htmlToAnnotatedString
+import io.github.adrcotfas.datetime.names.FormatStyle
+import io.github.adrcotfas.datetime.names.format
 import kotlinx.coroutines.launch
+import kotlinx.datetime.LocalDateTime
+import kotlinx.datetime.TimeZone
+import kotlinx.datetime.format
+import kotlinx.datetime.format.DateTimeComponents
+import kotlinx.datetime.format.DateTimeFormat
+import kotlinx.datetime.toLocalDateTime
 import the.autarch.newsgrid.channel.data.LocalChannelStore
 import the.autarch.newsgrid.entry.data.Entry
 import the.autarch.newsgrid.entry.data.EntryEntity
+import kotlin.time.Instant
 
 @Composable
 fun EntryDetailsScreen(entryId: String) {
@@ -58,7 +67,7 @@ fun EntryDetailsScreenContent(entry: Entry) {
             style = MaterialTheme.typography.titleLarge
         )
 
-        if (entry.author != null || entry.pubDate != null) {
+        if (entry.author != null || entry.pubDate != null || entry.timestamp != null) {
 
             Column {
 
@@ -69,11 +78,25 @@ fun EntryDetailsScreenContent(entry: Entry) {
                     )
                 }
 
-                entry.pubDate?.let {
+                val timestamp = entry.timestamp
+                if (timestamp != null) {
+
+                    val localDt = Instant.fromEpochMilliseconds(timestamp)
+                        .toLocalDateTime(TimeZone.currentSystemDefault())
+                        .format(dateStyle = FormatStyle.SHORT, timeStyle = FormatStyle.SHORT)
                     Text(
-                        it,
+                        localDt,
                         style = MaterialTheme.typography.labelMedium
                     )
+
+                } else {
+
+                    entry.pubDate?.let {
+                        Text(
+                            it,
+                            style = MaterialTheme.typography.labelMedium
+                        )
+                    }
                 }
             }
         }

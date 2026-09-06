@@ -10,15 +10,13 @@ import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.Modifier
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.navigation.NavHostController
-import androidx.navigation.compose.rememberNavController
+import androidx.navigation3.runtime.rememberNavBackStack
 import the.autarch.newsgrid.channel.api.provideRssParser
 import the.autarch.newsgrid.channel.data.ChannelEntity
 import the.autarch.newsgrid.channel.data.ChannelStore
@@ -26,6 +24,8 @@ import the.autarch.newsgrid.channel.data.LocalChannelStore
 import the.autarch.newsgrid.navigation.AppBar
 import the.autarch.newsgrid.navigation.AppBottomBar
 import the.autarch.newsgrid.navigation.AppRouter
+import the.autarch.newsgrid.navigation.Route
+import the.autarch.newsgrid.navigation.navConfig
 import the.autarch.newsgrid.search.api.LocalSearchApi
 import the.autarch.newsgrid.search.api.provideSearchApi
 
@@ -46,15 +46,15 @@ fun App() {
 
     val colorScheme = rememberColorScheme()
 
-    val navController: NavHostController = rememberNavController()
     val snackbarHostState = remember { SnackbarHostState() }
 
     var selectedChannels by remember { mutableStateOf<List<ChannelEntity>>(emptyList()) }
 
+    val backStack = rememberNavBackStack(navConfig, Route.Main)
+
     CompositionLocalProvider(
         LocalChannelStore provides ChannelStore(database, provideRssParser(), dataStore),
         LocalSearchApi provides provideSearchApi(),
-        LocalNavHostController provides navController,
         LocalSnackbarHostState provides snackbarHostState,
     ) {
 
@@ -66,14 +66,26 @@ fun App() {
         ) {
             Scaffold(
                 topBar = {
-                    AppBar(selectedChannels) {
-                        selectedChannels = emptyList()
-                    }
+                    AppBar(
+                        currentlyVisibleRoute = backStack.last(),
+                        selectedChannels = selectedChannels,
+                        onDeselectChannels = { selectedChannels = emptyList() },
+                        onBack = { backStack.removeLastOrNull() },
+                        onNavigateToRoute = { backStack.add(it) }
+                    )
                 },
-                bottomBar = { AppBottomBar(bookmarks.map { it.link }) },
+                bottomBar = {
+                    AppBottomBar(
+                        currentlyVisibleRoute = backStack.last(),
+                        bookmarkIds = bookmarks.map { it.link }
+                    )
+                },
                 snackbarHost = { SnackbarHost(hostState = LocalSnackbarHostState.current) },
                 content = { innerPadding ->
-                    AppRouter(Modifier.padding(innerPadding), selectedChannels) { selectedChannel ->
+                    AppRouter(
+                        backStack,
+                        Modifier.padding(innerPadding), selectedChannels
+                    ) { selectedChannel ->
                         if (selectedChannels.contains(selectedChannel)) {
                             selectedChannels -= selectedChannel
                         } else {
@@ -88,8 +100,4 @@ fun App() {
 
 var LocalSnackbarHostState = staticCompositionLocalOf<SnackbarHostState> {
     error("No CompositionLocal LocalSnackbarHostState")
-}
-
-var LocalNavHostController = staticCompositionLocalOf<NavHostController> {
-    error("No LocalComposition LocalNavHostController")
 }

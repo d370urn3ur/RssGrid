@@ -15,9 +15,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.kmpalette.loader.rememberNetworkLoader
-import com.kmpalette.rememberDominantColorState
-import io.ktor.http.Url
 import the.autarch.newsgrid.bookmark.presentation.BookmarkItem
 import the.autarch.newsgrid.bookmark.presentation.BookmarksScreen
 import the.autarch.newsgrid.channel.data.ChannelEntity
@@ -29,45 +26,78 @@ import the.autarch.newsgrid.navigation.TabIndex
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun AppContainer(selectedChannels: List<ChannelEntity>, onChannelSelected: (ChannelEntity) -> Unit) {
-
-    var tabIndex by remember { mutableStateOf(TabIndex.CHANNELS) }
+fun AppContainer(
+//    tabIndex: TabIndex,
+//    onSetTabIndex: (TabIndex) -> Unit,
+//    selectedChannels: List<ChannelEntity>,
+//    onChannelSelected: (ChannelEntity) -> Unit,
+//    onNavigateToRoute: (Route) -> Unit
+    state: AppContainerState
+) {
 
     val store = LocalChannelStore.current
     val channels by LocalChannelStore.current.channels.collectAsStateWithLifecycle(emptyList())
     val bookmarks by LocalChannelStore.current.bookmarks.collectAsStateWithLifecycle(emptyList())
-    val navController = LocalNavHostController.current
 
     LaunchedEffect(Unit) {
         store.refreshChannels()
     }
 
     Column {
-        PrimaryTabRow(selectedTabIndex = tabIndex.idxVal) {
+
+        PrimaryTabRow(selectedTabIndex = state.tabIndex.idxVal) {
             TabIndex.entries.forEach {
                 Tab(
-                    selected = tabIndex == it,
-                    onClick = { tabIndex = it },
+                    selected = state.tabIndex == it,
+                    onClick = { state.tabIndex = it },
                     text = { Text(text = it.title, maxLines = 2, overflow = TextOverflow.Ellipsis) }
                 )
             }
         }
-        when (tabIndex) {
+
+        when (state.tabIndex) {
+
             TabIndex.CHANNELS -> ChannelsScreen(
                 channels,
-                onNavigateToRoute = { navController.navigate(it) }
+                onNavigateToRoute = state.onNavigateToRoute
             ) { channel ->
-                ChannelItem(channel, selectedChannels, onChannelSelected)
+                ChannelItem(channel, state.selectedChannels, state.onChannelSelected, state.onNavigateToRoute)
             }
+
             TabIndex.BOOKMARKS -> BookmarksScreen(bookmarks) { bookmark ->
                 BookmarkItem(
                     bookmark,
                     Modifier.animateItem()
                         .clickable {
-                            navController.navigate(Route.BookmarkDetails(bookmark.link, bookmark.channelName))
+                            state.onNavigateToRoute(Route.BookmarkDetails(bookmark.link, bookmark.channelName))
                         }
                 )
             }
         }
+    }
+}
+
+class AppContainerState(
+    initialTabIndex: TabIndex,
+    val selectedChannels: List<ChannelEntity>,
+    val onChannelSelected: (ChannelEntity) -> Unit,
+    val onNavigateToRoute: (Route) -> Unit
+) {
+    var tabIndex by mutableStateOf(initialTabIndex)
+}
+
+@Composable
+fun rememberAppContainerState(
+    selectedChannels: List<ChannelEntity>,
+    onChannelSelected: (ChannelEntity) -> Unit,
+    onNavigateToRoute: (Route) -> Unit
+): AppContainerState {
+    return remember(selectedChannels, onChannelSelected, onNavigateToRoute) {
+        AppContainerState(
+            initialTabIndex = TabIndex.CHANNELS,
+            selectedChannels = selectedChannels,
+            onChannelSelected = onChannelSelected,
+            onNavigateToRoute = onNavigateToRoute
+        )
     }
 }

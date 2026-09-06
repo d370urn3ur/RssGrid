@@ -1,49 +1,54 @@
 [versions]
-agp = "9.0.0"
-android-compileSdk = "36"
+agp = "9.4.0"
+android-compileSdk = "37"
 android-minSdk = "26"
-android-targetSdk = "36"
-androidx-activityCompose = "1.12.3"
-androidx-lifecycle = "2.9.6"
-componentsResources = "1.10.0"
-compose-multiplatform = "1.10.0"
-datastore = "1.2.0"
-foundation = "1.10.0"
-htmlconverter = "1.1.0"
+android-targetSdk = "37"
+androidx-activityCompose = "1.13.0"
+androidx-lifecycle = "2.11.0"
+componentsResources = "1.12.0"
+compose-multiplatform = "1.12.0"
+datastore = "1.2.1"
+desugar_jdk_libs = "2.1.5"
+foundation = "1.12.0"
+htmlconverter = "1.1.1"
 kmpaletteCore = "3.1.0"
-kotlin = "2.3.0"
-kotlinx-coroutines = "1.10.2"
-kotlinxDatetime = "0.7.1"
-kotlinxSerializationJson = "1.10.0"
-ksoup = "0.2.5"
-ktor = "3.4.0"
-landscapistCoil3 = "2.9.3"
-logging = "2.1.0"
+kotlin = "2.4.10"
+kotlinx-coroutines = "1.11.0"
+kotlinxDatetime = "0.8.0"
+kotlinxDatetimeNames = "0.2.0"
+kotlinxSerializationJson = "1.11.0"
+ksoup = "0.2.6"
+ktor = "3.5.2"
+landscapistCoil3 = "2.11.0"
+logging = "2.1.2"
 material3 = "1.9.0"
-materialKolor = "4.1.0"
+materialKolor = "5.0.1"
 room = "2.8.4"
-rssparser = "6.1.2"
-#runtimeAndroid = "1.10.1"
-ksp = "2.3.4"
-navigationCompose = "2.9.1"
+rssparser = "6.1.8"
+ksp = "2.3.6"
+navigationCompose = "2.9.2"
 material3Android = "1.4.0"
-runtime = "1.10.0"
-sqlite = "2.6.2"
-uiToolingPreview = "1.10.0"
+runtime = "1.12.0"
+sqlite = "2.7.0"
+uiToolingPreview = "1.12.0"
+multiplatform-nav3-ui = "1.1.1"
 
 [libraries]
 androidx-datastore = { module = "androidx.datastore:datastore", version.ref = "datastore" }
 androidx-datastore-preferences = { module = "androidx.datastore:datastore-preferences", version.ref = "datastore" }
 androidx-material3 = { module = "androidx.compose.material3:material3", version.ref = "material3Android" }
+jetbrains-navigation3-ui = { module = "org.jetbrains.androidx.navigation3:navigation3-ui", version.ref = "multiplatform-nav3-ui" }
 androidx-room-runtime = { module = "androidx.room:room-runtime", version.ref = "room" }
 androidx-room-compiler = { module = "androidx.room:room-compiler", version.ref = "room" }
 androidx-sqlite-bundled = { module = "androidx.sqlite:sqlite-bundled", version.ref = "sqlite" }
 components-resources = { module = "org.jetbrains.compose.components:components-resources", version.ref = "componentsResources" }
+desugar_jdk_libs = { module = "com.android.tools:desugar_jdk_libs", version.ref = "desugar_jdk_libs" }
 foundation = { module = "org.jetbrains.compose.foundation:foundation", version.ref = "foundation" }
 htmlconverter = { module = "be.digitalia.compose.htmlconverter:htmlconverter", version.ref = "htmlconverter" }
 kmpalette-core = { module = "com.kmpalette:kmpalette-core", version.ref = "kmpaletteCore" }
 kmpalette-network = { module = "com.kmpalette:extensions-network", version.ref = "kmpaletteCore" }
 kotlinx-datetime = { module = "org.jetbrains.kotlinx:kotlinx-datetime", version.ref = "kotlinxDatetime" }
+kotlinx-datetime-names = { module = "io.github.adrcotfas:kotlinx-datetime-names", version.ref = "kotlinxDatetimeNames" }
 ksoup = { module = "com.fleeksoft.ksoup:ksoup-network", version.ref = "ksoup" }
 logging = { module = "com.diamondedge:logging", version.ref = "logging" }
 material-kolor = { module = "com.materialkolor:material-kolor", version.ref = "materialKolor" }
@@ -61,8 +66,6 @@ rssparser = { module = "com.prof18.rssparser:rssparser", version.ref = "rssparse
 runtime = { module = "org.jetbrains.compose.runtime:runtime", version.ref = "runtime" }
 ui = { module = "org.jetbrains.compose.ui:ui", version.ref = "uiToolingPreview" }
 ui-tooling-preview = { module = "org.jetbrains.compose.ui:ui-tooling-preview", version.ref = "uiToolingPreview" }
-#androidx-runtime-android = { group = "androidx.compose.runtime", name = "runtime-android", version.ref = "runtimeAndroid" }
-#androidx-material3-android = { group = "androidx.compose.material3", name = "material3-android", version.ref = "material3Android" }
 
 [plugins]
 androidMultiplatformLibrary = { id = "com.android.kotlin.multiplatform.library", version.ref = "agp" }
