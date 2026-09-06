@@ -32,6 +32,7 @@ runtime = "1.12.0"
 sqlite = "2.7.0"
 uiToolingPreview = "1.12.0"
 multiplatform-nav3-ui = "1.1.1"
+slf4j = "2.0.17-0"
 
 [libraries]
 androidx-datastore = { module = "androidx.datastore:datastore", version.ref = "datastore" }
@@ -64,6 +65,7 @@ ktor-serialization-kotlinx-json = { module = "io.ktor:ktor-serialization-kotlinx
 landscapist-coil3 = { module = "com.github.skydoves:landscapist-coil3", version.ref = "landscapistCoil3" }
 rssparser = { module = "com.prof18.rssparser:rssparser", version.ref = "rssparser" }
 runtime = { module = "org.jetbrains.compose.runtime:runtime", version.ref = "runtime" }
+slf4j-android = { module = "uk.uuid.slf4j:slf4j-android", version.ref = "slf4j" }
 ui = { module = "org.jetbrains.compose.ui:ui", version.ref = "uiToolingPreview" }
 ui-tooling-preview = { module = "org.jetbrains.compose.ui:ui-tooling-preview", version.ref = "uiToolingPreview" }
 

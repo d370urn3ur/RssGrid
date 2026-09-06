@@ -1,4 +1,3 @@
-import org.gradle.kotlin.dsl.kotlin
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.konan.properties.hasProperty
 import java.io.FileInputStream
@@ -20,6 +19,7 @@ kotlin {
 
     dependencies {
         implementation(projects.composeApp)
+        implementation(libs.slf4j.android)
         implementation(libs.ui.tooling.preview)
         implementation(libs.androidx.activity.compose)
         implementation(libs.androidx.material3)

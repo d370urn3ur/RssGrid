@@ -16,9 +16,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalClipboard
-import androidx.compose.ui.platform.LocalClipboardManager
 import androidx.compose.ui.platform.LocalUriHandler
-import androidx.compose.ui.text.AnnotatedString
 import io.ktor.http.URLBuilder
 import io.ktor.http.URLProtocol
 import io.ktor.http.Url
@@ -33,12 +31,13 @@ import org.jetbrains.compose.resources.painterResource
 import the.autarch.newsgrid.LocalSnackbarHostState
 import the.autarch.newsgrid.channel.data.LocalChannelStore
 import the.autarch.newsgrid.share.rememberShareManager
+import the.autarch.newsgrid.toClipEntry
 
 @Composable
 fun EntryDetailBottomBar(entryId: String, isBookmarked: Boolean) {
 
     val scope = rememberCoroutineScope()
-    val clipboard = LocalClipboardManager.current
+    val clipboard = LocalClipboard.current
     val snackbar = LocalSnackbarHostState.current
     val store = LocalChannelStore.current
     val uriHandler = LocalUriHandler.current
@@ -52,7 +51,7 @@ fun EntryDetailBottomBar(entryId: String, isBookmarked: Boolean) {
             Spacer(Modifier.weight(1f))
 
             IconButton({ scope.launch {
-                clipboard.setText(AnnotatedString(sanitizeLink(entryId)))
+                clipboard.setClipEntry(sanitizeLink(entryId).toClipEntry())
                 snackbar.showSnackbar("Link copied to clipboard")
             }}) {
                 Icon(
