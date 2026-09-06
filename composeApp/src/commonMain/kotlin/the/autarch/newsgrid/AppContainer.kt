@@ -26,14 +26,7 @@ import the.autarch.newsgrid.navigation.TabIndex
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun AppContainer(
-//    tabIndex: TabIndex,
-//    onSetTabIndex: (TabIndex) -> Unit,
-//    selectedChannels: List<ChannelEntity>,
-//    onChannelSelected: (ChannelEntity) -> Unit,
-//    onNavigateToRoute: (Route) -> Unit
-    state: AppContainerState
-) {
+fun AppContainer(state: AppContainerState) {
 
     val store = LocalChannelStore.current
     val channels by LocalChannelStore.current.channels.collectAsStateWithLifecycle(emptyList())
@@ -92,6 +85,7 @@ fun rememberAppContainerState(
     onChannelSelected: (ChannelEntity) -> Unit,
     onNavigateToRoute: (Route) -> Unit
 ): AppContainerState {
+
     return remember(selectedChannels, onChannelSelected, onNavigateToRoute) {
         AppContainerState(
             initialTabIndex = TabIndex.CHANNELS,
