@@ -1,5 +1,6 @@
 package the.autarch.newsgrid
 
+import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
@@ -80,7 +81,12 @@ fun App() {
                         bookmarkIds = bookmarks.map { it.link }
                     )
                 },
-                snackbarHost = { SnackbarHost(hostState = LocalSnackbarHostState.current) },
+                snackbarHost = {
+                    SnackbarHost(
+                        hostState = LocalSnackbarHostState.current,
+                        modifier = Modifier.imePadding()
+                    )
+                },
                 content = { innerPadding ->
                     AppRouter(
                         backStack,

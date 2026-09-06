@@ -8,9 +8,14 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.unit.dp
 import the.autarch.newsgrid.bookmark.data.BookmarkEntity
+import the.autarch.newsgrid.bookmark.data.BookmarkSummary
 
 @Composable
-fun BookmarksScreen(bookmarks: List<BookmarkEntity>, item: @Composable LazyItemScope.(BookmarkEntity) -> Unit) {
+fun BookmarksScreen(
+    bookmarks: List<BookmarkSummary>,
+    item: @Composable LazyItemScope.(BookmarkSummary) -> Unit
+) {
+
     LazyColumn(
         contentPadding = PaddingValues(16.dp),
         verticalArrangement = Arrangement.spacedBy(32.dp)

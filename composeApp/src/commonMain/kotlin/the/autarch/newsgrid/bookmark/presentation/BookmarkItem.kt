@@ -31,11 +31,12 @@ import com.skydoves.landscapist.coil3.CoilImage
 import io.ktor.http.Url
 import kotlinx.coroutines.launch
 import the.autarch.newsgrid.bookmark.data.BookmarkEntity
+import the.autarch.newsgrid.bookmark.data.BookmarkSummary
 import the.autarch.newsgrid.channel.data.LocalChannelStore
 import the.autarch.newsgrid.navigation.Route
 
 @Composable
-fun BookmarkItem(bookmark: BookmarkEntity, modifier: Modifier = Modifier) {
+fun BookmarkItem(bookmark: BookmarkSummary, modifier: Modifier = Modifier) {
 
     val store = LocalChannelStore.current
     val scope = rememberCoroutineScope()

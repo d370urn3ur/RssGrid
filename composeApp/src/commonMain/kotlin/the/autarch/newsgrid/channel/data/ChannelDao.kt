@@ -9,6 +9,7 @@ import androidx.room.Relation
 import androidx.room.Transaction
 import kotlinx.coroutines.flow.Flow
 import the.autarch.newsgrid.entry.data.EntryEntity
+import the.autarch.newsgrid.entry.data.EntrySummary
 
 @Dao
 interface ChannelDao {
@@ -34,12 +35,14 @@ interface ChannelDao {
 }
 
 data class ChannelAndAllEntries(
+
     @Embedded
     val channel: ChannelEntity? = null,
 
     @Relation(
         parentColumn = "link",
-        entityColumn = "channelId"
+        entityColumn = "channelId",
+        entity = EntryEntity::class
     )
-    val entries: List<EntryEntity> = ArrayList()
+    val entries: List<EntrySummary> = ArrayList()
 )

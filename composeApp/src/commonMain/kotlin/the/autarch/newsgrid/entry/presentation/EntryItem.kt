@@ -23,12 +23,12 @@ import androidx.compose.ui.unit.dp
 import com.skydoves.landscapist.ImageOptions
 import com.skydoves.landscapist.coil3.CoilImage
 import the.autarch.newsgrid.bookmark.presentation.BookmarkIcon
-import the.autarch.newsgrid.entry.data.EntryEntity
+import the.autarch.newsgrid.entry.data.EntrySummary
 import the.autarch.newsgrid.navigation.Route
 
 @Composable
 fun EntryItem(
-    item: EntryEntity,
+    item: EntrySummary,
     channelTitle: String,
     resolvedBgColor: Color,
     isBookmarked: Boolean,

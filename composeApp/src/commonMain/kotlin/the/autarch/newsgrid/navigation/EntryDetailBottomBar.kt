@@ -2,7 +2,6 @@ package the.autarch.newsgrid.navigation
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.material3.BottomAppBar
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
@@ -16,6 +15,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalClipboard
 import androidx.compose.ui.platform.LocalClipboardManager
 import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.text.AnnotatedString
@@ -49,7 +49,7 @@ fun EntryDetailBottomBar(entryId: String, isBookmarked: Boolean) {
     BottomAppBar(
         actions = {
 
-            Spacer(Modifier.Companion.weight(1f))
+            Spacer(Modifier.weight(1f))
 
             IconButton({ scope.launch {
                 clipboard.setText(AnnotatedString(sanitizeLink(entryId)))
@@ -114,8 +114,7 @@ fun EntryDetailBottomBar(entryId: String, isBookmarked: Boolean) {
                     )
                 }
             }
-        },
-        windowInsets = WindowInsets(0, 0, 0, 0)
+        }
     )
 }
 

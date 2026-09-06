@@ -9,8 +9,9 @@ import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface BookmarkDao {
+
     @Query("SELECT * FROM bookmark")
-    fun getAllAsFlow(): Flow<List<BookmarkEntity>>
+    fun getAllAsFlow(): Flow<List<BookmarkSummary>>
 
     @Insert(onConflict = OnConflictStrategy.Companion.IGNORE) // REPLACE ?
     suspend fun insert(bookmark: BookmarkEntity)

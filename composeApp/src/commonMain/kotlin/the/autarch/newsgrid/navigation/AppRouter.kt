@@ -1,5 +1,8 @@
 package the.autarch.newsgrid.navigation
 
+import androidx.compose.animation.slideInHorizontally
+import androidx.compose.animation.slideOutHorizontally
+import androidx.compose.animation.togetherWith
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.navigation3.runtime.NavBackStack
@@ -35,7 +38,20 @@ fun AppRouter(
             entry<Route.Main> { key ->
                 AppContainer(containerState)
             }
-            entry<Route.Search> { key ->
+            entry<Route.Search>(
+//                metadata = metadata {
+//                    // Forward navigation: Slide up from the bottom
+//                    put(NavDisplay.TransitionKey) {
+//                        slideInVertically(initialOffsetY = { it }) togetherWith
+//                                ExitTransition.KeepUntilTransitionsFinished
+//                    }
+//                    // Backward navigation: Slide down to the bottom
+//                    put(NavDisplay.PopTransitionKey) {
+//                        EnterTransition.None togetherWith
+//                                slideOutVertically(targetOffsetY = { it })
+//                    }
+//                }
+            ) { key ->
                 SearchScreen()
             }
             entry<Route.EntryDetails> { key ->
@@ -44,6 +60,21 @@ fun AppRouter(
             entry<Route.BookmarkDetails> { key ->
                 BookmarkDetailsScreen(key.bookmarkId)
             }
+        },
+        transitionSpec = {
+            // Forward nav
+            slideInHorizontally(initialOffsetX = { it }) togetherWith
+                    slideOutHorizontally(targetOffsetX = { -it })
+        },
+        popTransitionSpec = {
+            // Backward nav
+            slideInHorizontally(initialOffsetX = { -it }) togetherWith
+                    slideOutHorizontally(targetOffsetX = { it })
+        },
+        predictivePopTransitionSpec = {
+            // back gesture
+            slideInHorizontally(initialOffsetX = { -it }) togetherWith
+                    slideOutHorizontally(targetOffsetX = { it })
         }
     )
 }
