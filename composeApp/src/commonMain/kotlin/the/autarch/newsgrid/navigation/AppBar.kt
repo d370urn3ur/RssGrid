@@ -40,7 +40,7 @@ fun AppBar(
 ) {
 
     val isContextual = selectedChannels.isNotEmpty()
-    val containerColor = if (isContextual) MaterialTheme.colorScheme.secondary else MaterialTheme.colorScheme.primaryContainer
+    val containerColor = if (isContextual) MaterialTheme.colorScheme.secondaryContainer else MaterialTheme.colorScheme.primaryContainer
     val contentColor = if (isContextual) MaterialTheme.colorScheme.onSecondaryContainer else MaterialTheme.colorScheme.onPrimaryContainer
 
     val scope = rememberCoroutineScope()

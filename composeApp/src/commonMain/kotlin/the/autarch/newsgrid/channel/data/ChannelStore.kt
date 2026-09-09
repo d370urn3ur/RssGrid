@@ -117,7 +117,7 @@ class ChannelStore(private val appDatabase: AppDatabase, private val parser: Rss
         val entries = rssChannel.items.toTypedArray()
             .mapNotNull { item -> EntryEntity.fromRssItem(channel.link, item) }
             .toTypedArray()
-        appDatabase.getEntryDao().insert(*entries)
+        appDatabase.getEntryDao().insertAndCleanup(channel.link, entries)
     }
 
     suspend fun getEntry(entryId: String): EntryEntity? =

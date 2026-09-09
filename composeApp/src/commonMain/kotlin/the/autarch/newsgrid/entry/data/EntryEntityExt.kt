@@ -1,6 +1,7 @@
 package the.autarch.newsgrid.entry.data
 
 import com.prof18.rssparser.model.RssItem
+import kotlin.time.Clock
 import kotlin.time.ExperimentalTime
 import kotlin.time.Instant
 
@@ -12,7 +13,7 @@ fun EntryEntity.Companion.fromRssItem(channelId: String, rssItem: RssItem): Entr
         title = rssItem.title ?: return null,
         author = rssItem.author,
         pubDate = rssItem.pubDate,
-        timestamp = EntryEntity.parseTimestamp(rssItem.pubDate)?.toEpochMilliseconds(),
+        timestamp = EntryEntity.parseTimestamp(rssItem.pubDate).toEpochMilliseconds(),
         description = rssItem.description,
         content = rssItem.content,
         imageUrl = rssItem.image,
@@ -21,13 +22,13 @@ fun EntryEntity.Companion.fromRssItem(channelId: String, rssItem: RssItem): Entr
 }
 
 @OptIn(ExperimentalTime::class)
-fun EntryEntity.Companion.parseTimestamp(pubDate: String?): Instant? {
+fun EntryEntity.Companion.parseTimestamp(pubDate: String?): Instant {
 
-    val pubDate = pubDate ?: return null
+    val pubDate = pubDate ?: return Clock.System.now()
 
     val timestamp = try {
         Instant.parse(pubDate)
-    } catch (t: Throwable) {
+    } catch (_: Throwable) {
         null
     }
 
@@ -41,5 +42,5 @@ fun EntryEntity.Companion.parseTimestamp(pubDate: String?): Instant? {
         } catch (_: Throwable) {}
     }
 
-    return null
+    return Clock.System.now()
 }

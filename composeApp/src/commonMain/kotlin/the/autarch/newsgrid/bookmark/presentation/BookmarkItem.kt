@@ -28,12 +28,17 @@ import androidx.compose.ui.unit.dp
 import com.kmpalette.loader.rememberNetworkLoader
 import com.kmpalette.rememberDominantColorState
 import com.skydoves.landscapist.coil3.CoilImage
+import io.github.adrcotfas.datetime.names.FormatStyle
+import io.github.adrcotfas.datetime.names.format
 import io.ktor.http.Url
 import kotlinx.coroutines.launch
+import kotlinx.datetime.TimeZone
+import kotlinx.datetime.toLocalDateTime
 import the.autarch.newsgrid.bookmark.data.BookmarkEntity
 import the.autarch.newsgrid.bookmark.data.BookmarkSummary
 import the.autarch.newsgrid.channel.data.LocalChannelStore
 import the.autarch.newsgrid.navigation.Route
+import kotlin.time.Instant
 
 @Composable
 fun BookmarkItem(bookmark: BookmarkSummary, modifier: Modifier = Modifier) {
@@ -97,8 +102,25 @@ fun BookmarkItem(bookmark: BookmarkSummary, modifier: Modifier = Modifier) {
 
         Text(bookmark.title, style = MaterialTheme.typography.titleMedium)
 
-        bookmark.pubDate?.let {
-            Text(it, style = MaterialTheme.typography.bodySmall)
+        val timestamp = bookmark.timestamp
+        if (timestamp != null) {
+
+            val localDt = Instant.fromEpochMilliseconds(timestamp)
+                .toLocalDateTime(TimeZone.currentSystemDefault())
+                .format(dateStyle = FormatStyle.SHORT, timeStyle = FormatStyle.SHORT)
+            Text(
+                localDt,
+                style = MaterialTheme.typography.labelMedium
+            )
+
+        } else {
+
+            bookmark.pubDate?.let {
+                Text(
+                    it,
+                    style = MaterialTheme.typography.labelMedium
+                )
+            }
         }
     }
 }
