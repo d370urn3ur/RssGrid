@@ -5,7 +5,10 @@ import androidx.room.ConstructedBy
 import androidx.room.Database
 import androidx.room.RoomDatabase
 import androidx.room.RoomDatabaseConstructor
+import androidx.room.migration.Migration
+import androidx.sqlite.SQLiteConnection
 import androidx.sqlite.driver.bundled.BundledSQLiteDriver
+import androidx.sqlite.execSQL
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO
 import the.autarch.newsgrid.bookmark.data.BookmarkDao
@@ -21,7 +24,7 @@ import the.autarch.newsgrid.entry.data.EntryDao
         EntryEntity::class,
         BookmarkEntity::class
     ],
-    version = 1
+    version = 2
 )
 @ConstructedBy(AppDatabaseConstructor::class)
 abstract class AppDatabase : RoomDatabase() {
@@ -43,10 +46,21 @@ fun getRoomDatabase(
     builder: RoomDatabase.Builder<AppDatabase>
 ): AppDatabase {
     return builder
-        .addMigrations()
-//        .addMigrations(MIGRATIONS)
+        .addMigrations(
+            MIGRATION_1_2
+        )
         .fallbackToDestructiveMigrationOnDowngrade(true)
         .setDriver(BundledSQLiteDriver())
         .setQueryCoroutineContext(Dispatchers.IO)
         .build()
 }
+
+// region Migrations
+
+val MIGRATION_1_2 = object: Migration(1, 2) {
+    override fun migrate(connection: SQLiteConnection) {
+        connection.execSQL("ALTER TABLE channel ADD COLUMN listOrder INTEGER NOT NULL DEFAULT 0")
+    }
+}
+
+// endregion

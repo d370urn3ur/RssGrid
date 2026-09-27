@@ -28,12 +28,16 @@ fun AppRouter(
     backStack: NavBackStack<NavKey>,
     modifier: Modifier = Modifier,
     selectedChannels: List<ChannelEntity>,
+    isReordering: Boolean,
+    onToggleReorder: () -> Unit,
     onSelectChannel: (ChannelEntity) -> Unit
 ) {
 
     val containerState = rememberAppContainerState(
         selectedChannels = selectedChannels,
         onChannelSelected = onSelectChannel,
+        isReordering = isReordering,
+        onToggleReorder = onToggleReorder,
         onNavigateToRoute = { route -> backStack.add(route) }
     )
 

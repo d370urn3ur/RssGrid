@@ -65,6 +65,17 @@ class ChannelStore(private val appDatabase: AppDatabase, private val parser: Rss
         }
     }
 
+    suspend fun moveChannel(fromIndex: Int, toIndex: Int) {
+        val mutableChannels = appDatabase.getChannelDao().getAll().toMutableList()
+        val item = mutableChannels.removeAt(fromIndex)
+        mutableChannels.add(toIndex, item)
+        updateChannelsOrder(mutableChannels)
+    }
+
+    private suspend fun updateChannelsOrder(reorderedChannels: List<ChannelEntity>) {
+        appDatabase.getChannelDao().updateChannelsOrder(reorderedChannels)
+    }
+
     suspend fun addChannel(channelUrl: String) {
         val rssChannel = fetchChannelRss(channelUrl)
         var favicon = rssChannel.image?.url

@@ -57,6 +57,8 @@ fun App() {
 
     val backStack = rememberNavBackStack(navConfig, Route.Main())
 
+    var isReordering by remember { mutableStateOf(false) }
+
     CompositionLocalProvider(
         LocalChannelStore provides channelStore,
         LocalSearchApi provides provideSearchApi(),
@@ -75,6 +77,8 @@ fun App() {
                         currentlyVisibleRoute = backStack.last(),
                         selectedChannels = selectedChannels,
                         onDeselectChannels = { selectedChannels = emptyList() },
+                        isReordering = isReordering,
+                        onToggleReorder = { isReordering = !isReordering },
                         onBack = { backStack.removeLastOrNull() },
                         onNavigateToRoute = { backStack.add(it) }
                     )
@@ -94,14 +98,18 @@ fun App() {
                 content = { innerPadding ->
                     AppRouter(
                         backStack,
-                        Modifier.padding(innerPadding), selectedChannels
-                    ) { selectedChannel ->
-                        if (selectedChannels.contains(selectedChannel)) {
-                            selectedChannels -= selectedChannel
-                        } else {
-                            selectedChannels += selectedChannel
-                        }
-                    }
+                        Modifier.padding(innerPadding),
+                        selectedChannels,
+                        onSelectChannel = { selectedChannel ->
+                            if (selectedChannels.contains(selectedChannel)) {
+                                selectedChannels -= selectedChannel
+                            } else {
+                                selectedChannels += selectedChannel
+                            }
+                        },
+                        isReordering = isReordering,
+                        onToggleReorder = { isReordering = !isReordering }
+                    )
                 }
             )
         }

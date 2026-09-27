@@ -16,6 +16,7 @@ import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -37,6 +38,8 @@ import io.ktor.http.Url
 import kotlinx.coroutines.launch
 import newsgrid.composeapp.generated.resources.Res
 import newsgrid.composeapp.generated.resources.ic_check_circle
+import newsgrid.composeapp.generated.resources.ic_keyboard_arrow_down
+import newsgrid.composeapp.generated.resources.ic_keyboard_arrow_up
 import org.jetbrains.compose.resources.painterResource
 import the.autarch.newsgrid.channel.data.ChannelAndAllEntries
 import the.autarch.newsgrid.channel.data.ChannelEntity
@@ -44,11 +47,17 @@ import the.autarch.newsgrid.channel.data.LocalChannelStore
 import the.autarch.newsgrid.entry.presentation.EntryItem
 import the.autarch.newsgrid.navigation.Route
 
+enum class ReorderDirection {
+    UP, DOWN
+}
+
 @Composable
 fun ChannelItem(
     feed: ChannelAndAllEntries,
     selectedChannels: List<ChannelEntity>,
     onChannelSelected: (ChannelEntity) -> Unit,
+    isReordering: Boolean,
+    onMove: (ReorderDirection) -> Unit,
     onNavigateToRoute: (Route) -> Unit
 ) {
 
@@ -71,9 +80,20 @@ fun ChannelItem(
     Column {
 
         Row(verticalAlignment = Alignment.CenterVertically) {
+
+            if (isReordering) {
+                IconButton({ onMove(ReorderDirection.UP) }) {
+                    Icon(painterResource(Res.drawable.ic_keyboard_arrow_up), contentDescription = null)
+                }
+                IconButton({ onMove(ReorderDirection.DOWN) }) {
+                    Icon(painterResource(Res.drawable.ic_keyboard_arrow_down), contentDescription = null)
+                }
+            }
+
             ChannelItemIcon(channel, selectedChannels.contains(channel)) {
                 channel?.let { onChannelSelected(it) }
             }
+
             Text(
                 channelTitle,
                 modifier = Modifier

@@ -5,19 +5,14 @@ import androidx.room.PrimaryKey
 
 @Entity(
     tableName = "channel",
-//    indices = [
-//        Index(value = ["link"], unique = true),
-//    ]
 )
 data class ChannelEntity(
-//    @PrimaryKey(autoGenerate = true)
-//    val id: Long = 0,
-
     @PrimaryKey
     val link: String,
     val title: String,
     val description: String?,
-    val imageUrl: String?
+    val imageUrl: String?,
+    val listOrder: Int = 0
 ) {
     companion object
 }

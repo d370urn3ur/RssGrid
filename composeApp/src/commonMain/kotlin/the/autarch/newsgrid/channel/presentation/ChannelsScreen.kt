@@ -68,7 +68,9 @@ fun ChannelsScreen(
                     }
                 }
             ) {
-                LazyColumn(Modifier.fillMaxWidth()) {
+                LazyColumn(
+                    Modifier.fillMaxWidth()
+                ) {
                     items(channels) {
                         itemView(it)
                     }
