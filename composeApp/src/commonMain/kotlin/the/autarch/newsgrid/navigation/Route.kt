@@ -11,7 +11,7 @@ import kotlinx.serialization.modules.polymorphic
 sealed interface Route: NavKey {
 
     @Serializable
-    data object Main: Route
+    data class Main(val tab: TabIndex = TabIndex.CHANNELS) : Route
 
     @Serializable
     data object Search: Route

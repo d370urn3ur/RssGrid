@@ -51,10 +51,14 @@ fun App() {
 
     var selectedChannels by remember { mutableStateOf<List<ChannelEntity>>(emptyList()) }
 
-    val backStack = rememberNavBackStack(navConfig, Route.Main)
+    val channelStore = remember(database, dataStore) {
+        ChannelStore(database, provideRssParser(), dataStore)
+    }
+
+    val backStack = rememberNavBackStack(navConfig, Route.Main())
 
     CompositionLocalProvider(
-        LocalChannelStore provides ChannelStore(database, provideRssParser(), dataStore),
+        LocalChannelStore provides channelStore,
         LocalSearchApi provides provideSearchApi(),
         LocalSnackbarHostState provides snackbarHostState,
     ) {

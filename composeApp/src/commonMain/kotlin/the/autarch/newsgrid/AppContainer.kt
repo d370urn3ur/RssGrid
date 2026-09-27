@@ -2,19 +2,15 @@ package the.autarch.newsgrid
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.PrimaryTabRow
-import androidx.compose.material3.Tab
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.text.style.TextOverflow
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.compose.LifecycleEventEffect
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import kotlinx.coroutines.launch
 import the.autarch.newsgrid.bookmark.presentation.BookmarkItem
 import the.autarch.newsgrid.bookmark.presentation.BookmarksScreen
 import the.autarch.newsgrid.channel.data.ChannelEntity
@@ -24,31 +20,23 @@ import the.autarch.newsgrid.channel.presentation.ChannelsScreen
 import the.autarch.newsgrid.navigation.Route
 import the.autarch.newsgrid.navigation.TabIndex
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun AppContainer(state: AppContainerState) {
+fun AppContainer(tab: TabIndex, state: AppContainerState) {
 
+    val scope = rememberCoroutineScope()
     val store = LocalChannelStore.current
     val channels by LocalChannelStore.current.channels.collectAsStateWithLifecycle(emptyList())
     val bookmarks by LocalChannelStore.current.bookmarks.collectAsStateWithLifecycle(emptyList())
 
-    LaunchedEffect(Unit) {
-        store.refreshChannels()
+    LifecycleEventEffect(Lifecycle.Event.ON_START) {
+        scope.launch {
+            store.refreshChannels()
+        }
     }
 
     Column {
 
-        PrimaryTabRow(selectedTabIndex = state.tabIndex.idxVal) {
-            TabIndex.entries.forEach {
-                Tab(
-                    selected = state.tabIndex == it,
-                    onClick = { state.tabIndex = it },
-                    text = { Text(text = it.title, maxLines = 2, overflow = TextOverflow.Ellipsis) }
-                )
-            }
-        }
-
-        when (state.tabIndex) {
+        when (tab) {
 
             TabIndex.CHANNELS -> ChannelsScreen(
                 channels,
@@ -71,13 +59,10 @@ fun AppContainer(state: AppContainerState) {
 }
 
 class AppContainerState(
-    initialTabIndex: TabIndex,
     val selectedChannels: List<ChannelEntity>,
     val onChannelSelected: (ChannelEntity) -> Unit,
     val onNavigateToRoute: (Route) -> Unit
-) {
-    var tabIndex by mutableStateOf(initialTabIndex)
-}
+)
 
 @Composable
 fun rememberAppContainerState(
@@ -88,7 +73,6 @@ fun rememberAppContainerState(
 
     return remember(selectedChannels, onChannelSelected, onNavigateToRoute) {
         AppContainerState(
-            initialTabIndex = TabIndex.CHANNELS,
             selectedChannels = selectedChannels,
             onChannelSelected = onChannelSelected,
             onNavigateToRoute = onNavigateToRoute
