@@ -14,15 +14,25 @@ import the.autarch.newsgrid.entry.data.EntrySummary
 @Dao
 interface ChannelDao {
 
-    @Query("SELECT * FROM channel")
+    @Query("SELECT * FROM channel ORDER BY listOrder ASC")
     suspend fun getAll(): List<ChannelEntity>
 
-    @Query("SELECT * FROM channel")
+    @Query("SELECT * FROM channel ORDER BY listOrder ASC")
     fun getAllAsFlow(): Flow<List<ChannelEntity>>
 
     @Transaction
-    @Query("SELECT * FROM channel")
+    @Query("SELECT * FROM channel ORDER BY listOrder ASC")
     fun getAllWithEntriesAsFlow(): Flow<List<ChannelAndAllEntries>>
+
+    @Query("UPDATE channel SET listOrder = :listOrder WHERE link = :link")
+    suspend fun updateChannelOrder(link: String, listOrder: Int)
+
+    @Transaction
+    suspend fun updateChannelsOrder(channels: List<ChannelEntity>) {
+        channels.forEachIndexed { index, channel ->
+            updateChannelOrder(channel.link, index)
+        }
+    }
 
     @Query("SELECT * FROM channel WHERE link = :channelId")
     suspend fun channelForId(channelId: String): ChannelEntity?

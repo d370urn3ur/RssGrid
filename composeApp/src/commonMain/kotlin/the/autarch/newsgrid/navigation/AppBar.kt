@@ -21,8 +21,10 @@ import kotlinx.coroutines.launch
 import newsgrid.composeapp.generated.resources.Res
 import newsgrid.composeapp.generated.resources.ic_add
 import newsgrid.composeapp.generated.resources.ic_arrow_back
+import newsgrid.composeapp.generated.resources.ic_check_circle
 import newsgrid.composeapp.generated.resources.ic_cross_circle
 import newsgrid.composeapp.generated.resources.ic_delete
+import newsgrid.composeapp.generated.resources.ic_reorder
 import org.jetbrains.compose.resources.painterResource
 import the.autarch.newsgrid.channel.data.ChannelEntity
 import the.autarch.newsgrid.channel.data.LocalChannelStore
@@ -35,6 +37,8 @@ fun AppBar(
     currentlyVisibleRoute: NavKey,
     selectedChannels: List<ChannelEntity>,
     onDeselectChannels: () -> Unit,
+    isReordering: Boolean,
+    onToggleReorder: () -> Unit,
     onBack: () -> Unit,
     onNavigateToRoute: (Route) -> Unit
 ) {
@@ -53,6 +57,8 @@ fun AppBar(
             AppBarActions(
                 currentlyVisibleRoute,
                 isContextual,
+                isReordering,
+                onToggleReorder,
                 onDelete = { scope.launch {
                     onDeselectChannels()
                     store.deleteChannels(selectedChannels)
@@ -105,22 +111,46 @@ fun AppBarTitle(currentlyVisibleRoute: NavKey, isContextual: Boolean) {
 }
 
 @Composable
-fun AppBarActions(currentlyVisibleRoute: NavKey, isContextual: Boolean, onDelete: () -> Unit, onNavigateToRoute: (Route) -> Unit) {
+fun AppBarActions(
+    currentlyVisibleRoute: NavKey,
+    isContextual: Boolean,
+    isReordering: Boolean,
+    onToggleReorder: () -> Unit,
+    onDelete: () -> Unit,
+    onNavigateToRoute: (Route) -> Unit
+) {
 
     when (currentlyVisibleRoute) {
-        is Route.Main -> if (isContextual) {
-            IconButton({ onDelete() }) {
-                Icon(
-                    painterResource(Res.drawable.ic_delete),
-                    contentDescription = "Delete selected channels"
-                )
-            }
-        } else {
-            IconButton({ onNavigateToRoute(Route.Search) }) {
-                Icon(
-                    painterResource(Res.drawable.ic_add),
-                    contentDescription = "Add Channel"
-                )
+        is Route.Main -> {
+            if (isContextual) {
+                IconButton({ onDelete() }) {
+                    Icon(
+                        painterResource(Res.drawable.ic_delete),
+                        contentDescription = "Delete selected channels"
+                    )
+                }
+            } else {
+                if (currentlyVisibleRoute.tab == TabIndex.CHANNELS) {
+                    IconButton(onToggleReorder) {
+                        Icon(
+                            painter = painterResource(
+                                if (isReordering)
+                                    Res.drawable.ic_check_circle
+                                else
+                                    Res.drawable.ic_reorder
+                            ),
+                            contentDescription = if (isReordering) "Done reordering" else "Reorder channels"
+                        )
+                    }
+                }
+                if (!isReordering) {
+                    IconButton({ onNavigateToRoute(Route.Search) }) {
+                        Icon(
+                            painterResource(Res.drawable.ic_add),
+                            contentDescription = "Add Channel"
+                        )
+                    }
+                }
             }
         }
         is Route.Search -> AppBarButtonImportChannel()
