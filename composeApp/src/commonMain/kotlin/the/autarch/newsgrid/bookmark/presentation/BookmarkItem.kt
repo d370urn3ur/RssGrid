@@ -1,7 +1,6 @@
 package the.autarch.newsgrid.bookmark.presentation
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -19,11 +18,9 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import com.kmpalette.loader.rememberNetworkLoader
 import com.kmpalette.rememberDominantColorState
@@ -31,20 +28,17 @@ import com.skydoves.landscapist.coil3.CoilImage
 import io.github.adrcotfas.datetime.names.FormatStyle
 import io.github.adrcotfas.datetime.names.format
 import io.ktor.http.Url
-import kotlinx.coroutines.launch
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
-import the.autarch.newsgrid.bookmark.data.BookmarkEntity
 import the.autarch.newsgrid.bookmark.data.BookmarkSummary
-import the.autarch.newsgrid.channel.data.LocalChannelStore
-import the.autarch.newsgrid.navigation.Route
 import kotlin.time.Instant
 
 @Composable
-fun BookmarkItem(bookmark: BookmarkSummary, modifier: Modifier = Modifier) {
-
-    val store = LocalChannelStore.current
-    val scope = rememberCoroutineScope()
+fun BookmarkItem(
+    bookmark: BookmarkSummary,
+    modifier: Modifier = Modifier,
+    onRemoveBoomark: () -> Unit
+) {
 
     val networkLoader = rememberNetworkLoader()
     val colorHint = rememberDominantColorState(loader = networkLoader)
@@ -75,9 +69,7 @@ fun BookmarkItem(bookmark: BookmarkSummary, modifier: Modifier = Modifier) {
                 )
 
                 TextButton({
-                    scope.launch {
-                        store.removeBookmark(bookmark.link)
-                    }
+                    onRemoveBoomark()
                 }) {
                     BookmarkIcon(Modifier.padding(4.dp))
                 }

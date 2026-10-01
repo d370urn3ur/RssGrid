@@ -5,36 +5,44 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.Stable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import kotlinx.coroutines.launch
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import the.autarch.newsgrid.base.TaskProgress
 import the.autarch.newsgrid.bookmark.data.BookmarkEntity
-import the.autarch.newsgrid.channel.data.LocalChannelStore
 import the.autarch.newsgrid.entry.presentation.EntryDetailsScreenContent
 
 @Composable
-fun BookmarkDetailsScreen(bookmarkId: String) {
+fun BookmarkDetailsScreen(
+    bookmarkId: String,
+    viewModel: BookmarkDetailsViewModel = bookmarkDetailsViewModel()
+) {
 
-    val scope = rememberCoroutineScope()
-    val store = LocalChannelStore.current
-    var bookmark by remember { mutableStateOf<BookmarkEntity?>(null) }
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
     LaunchedEffect(bookmarkId) {
-        scope.launch {
-            bookmark = store.getBookmark(bookmarkId)
-        }
+        viewModel.onAction(BookmarkDetailsUiAction.GetBookmark(bookmarkId))
     }
 
-    Surface(
-        modifier = Modifier.fillMaxSize(),
-        color = MaterialTheme.colorScheme.background
-    ) {
-        bookmark?.let { entry ->
-            EntryDetailsScreenContent(entry)
+    when (val status = uiState.getBookmarkOperation) {
+        is TaskProgress.Success -> Surface(
+            modifier = Modifier.fillMaxSize(),
+            color = MaterialTheme.colorScheme.background
+        ) {
+            EntryDetailsScreenContent(status.result)
+        }
+        else -> {
+            // TODO: show loading??
         }
     }
+}
+
+@Stable
+data class BookmarkDetailsUiState(
+    val getBookmarkOperation: TaskProgress<BookmarkEntity> = TaskProgress.Idle
+)
+
+sealed interface BookmarkDetailsUiAction {
+    data class GetBookmark(val bookmarkId: String): BookmarkDetailsUiAction
 }

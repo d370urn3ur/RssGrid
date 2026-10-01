@@ -1,6 +1,5 @@
 package the.autarch.newsgrid.search.api
 
-import androidx.compose.runtime.staticCompositionLocalOf
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
@@ -42,8 +41,4 @@ fun provideSearchApi(): FeedSearchDevApi {
         }
     }
     return FeedSearchDevApiImpl(ktorClient)
-}
-
-val LocalSearchApi = staticCompositionLocalOf<FeedSearchDevApi> {
-    error("No CompositionLocal LocalSearchApi")
 }

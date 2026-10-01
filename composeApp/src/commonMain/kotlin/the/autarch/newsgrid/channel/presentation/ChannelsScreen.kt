@@ -3,45 +3,39 @@ package the.autarch.newsgrid.channel.presentation
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.LazyItemScope
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Text
 import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.Stable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.dp
-import kotlinx.coroutines.launch
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import the.autarch.newsgrid.AppContainerState
+import the.autarch.newsgrid.AppUiAction
+import the.autarch.newsgrid.bookmark.data.BookmarkSummary
 import the.autarch.newsgrid.channel.data.ChannelAndAllEntries
-import the.autarch.newsgrid.channel.data.LocalChannelStore
 import the.autarch.newsgrid.navigation.Route
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ChannelsScreen(
-    channels: List<ChannelAndAllEntries>,
+    state: AppContainerState,
+    viewModel: ChannelsScreenViewModel = channelsScreenViewModel(),
     onNavigateToRoute: (Route) -> Unit,
-    itemView: @Composable LazyItemScope.(ChannelAndAllEntries) -> Unit,
 ) {
 
-    val store = LocalChannelStore.current
-    val scope = rememberCoroutineScope()
-    var isRefreshing by remember { mutableStateOf(false) }
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
     Box(Modifier.fillMaxSize()) {
 
-        if (channels.isEmpty()) {
+        if (uiState.channels.isEmpty()) {
 
             Column(
                 Modifier.fillMaxSize(),
@@ -59,23 +53,50 @@ fun ChannelsScreen(
         } else {
 
             PullToRefreshBox(
-                isRefreshing,
+                uiState.isRefreshing,
                 onRefresh = {
-                    isRefreshing = true
-                    scope.launch {
-                        store.refreshChannels(true)
-                        isRefreshing = false
-                    }
+                    viewModel.onAction(ChannelsUiAction.RefreshChannels(true))
                 }
             ) {
                 LazyColumn(
                     Modifier.fillMaxWidth()
                 ) {
-                    items(channels) {
-                        itemView(it)
+                    items(uiState.channels) { channel ->
+                        val idx = uiState.channels.indexOf(channel)
+                        ChannelItem(
+                            channel,
+                            state.selectedChannels,
+                            { state.onAppAction(AppUiAction.ToggleChannelSelected(it)) },
+                            uiState.bookmarks,
+                            state.isReordering,
+                            onMove = { direction ->
+                                when (direction) {
+                                    ReorderDirection.UP -> viewModel.onAction(
+                                        ChannelsUiAction.MoveChannelUp(idx)
+                                    )
+                                    ReorderDirection.DOWN -> viewModel.onAction(
+                                        ChannelsUiAction.MoveChannelDown(idx)
+                                    )
+                                }
+                            },
+                            state.onNavigateToRoute
+                        )
                     }
                 }
             }
         }
     }
+}
+
+@Stable
+data class ChannelsUiState(
+    val channels: List<ChannelAndAllEntries> = emptyList(),
+    val bookmarks: List<BookmarkSummary> = emptyList(),
+    val isRefreshing: Boolean = false
+)
+
+sealed interface ChannelsUiAction {
+    data class MoveChannelUp(var idx: Int): ChannelsUiAction
+    data class MoveChannelDown(var idx: Int): ChannelsUiAction
+    data class RefreshChannels(var force: Boolean): ChannelsUiAction
 }

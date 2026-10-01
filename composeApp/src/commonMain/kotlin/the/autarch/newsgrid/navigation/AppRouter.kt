@@ -11,11 +11,16 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.lifecycle.viewmodel.navigation3.rememberViewModelStoreNavEntryDecorator
 import androidx.navigation3.runtime.NavBackStack
 import androidx.navigation3.runtime.NavKey
 import androidx.navigation3.runtime.entryProvider
+import androidx.navigation3.runtime.rememberSaveableStateHolderNavEntryDecorator
 import androidx.navigation3.ui.NavDisplay
 import the.autarch.newsgrid.AppContainer
+import the.autarch.newsgrid.AppUiAction
+import the.autarch.newsgrid.base.TaskProgress
+import the.autarch.newsgrid.bookmark.data.BookmarkSummary
 import the.autarch.newsgrid.bookmark.presentation.BookmarkDetailsScreen
 import the.autarch.newsgrid.channel.data.ChannelEntity
 import the.autarch.newsgrid.entry.presentation.EntryDetailsScreen
@@ -29,15 +34,15 @@ fun AppRouter(
     modifier: Modifier = Modifier,
     selectedChannels: List<ChannelEntity>,
     isReordering: Boolean,
-    onToggleReorder: () -> Unit,
-    onSelectChannel: (ChannelEntity) -> Unit
+    addChannelOperation: TaskProgress<String>,
+    onAppAction: (AppUiAction) -> Unit,
+    bookmarks: List<BookmarkSummary>
 ) {
 
     val containerState = rememberAppContainerState(
         selectedChannels = selectedChannels,
-        onChannelSelected = onSelectChannel,
         isReordering = isReordering,
-        onToggleReorder = onToggleReorder,
+        onAppAction = onAppAction,
         onNavigateToRoute = { route -> backStack.add(route) }
     )
 
@@ -68,12 +73,24 @@ fun AppRouter(
             backStack = backStack,
             modifier = Modifier.weight(1f),
             onBack = { backStack.removeLastOrNull() },
+            entryDecorators = listOf(
+                rememberSaveableStateHolderNavEntryDecorator(),
+                rememberViewModelStoreNavEntryDecorator()
+            ),
             entryProvider = entryProvider {
                 entry<Route.Main> { key ->
-                    AppContainer(key.tab, containerState)
+                    AppContainer(
+                        key.tab,
+                        containerState,
+                        bookmarks,
+                        onAppAction = onAppAction
+                    )
                 }
                 entry<Route.Search> {
-                    SearchScreen()
+                    SearchScreen(
+                        addChannelOperation = addChannelOperation,
+                        onAddChannel = { onAppAction(AppUiAction.AddChannel(it)) }
+                    )
                 }
                 entry<Route.EntryDetails> { key ->
                     EntryDetailsScreen(key.entryId)

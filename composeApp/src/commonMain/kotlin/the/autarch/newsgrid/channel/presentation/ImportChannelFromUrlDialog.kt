@@ -15,17 +15,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.text.input.PlatformImeOptions
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.launch
-import the.autarch.newsgrid.LocalSnackbarHostState
-import the.autarch.newsgrid.channel.data.LocalChannelStore
+import the.autarch.newsgrid.base.TaskProgress
 
 @Composable
-fun ImportChannelFromUrlDialog(scope: CoroutineScope, onDismiss: () -> Unit) {
-
-    val channelStore = LocalChannelStore.current
-    val snackbarHostState = LocalSnackbarHostState.current
+fun ImportChannelFromUrlDialog(
+    addChannelOperation: TaskProgress<String>,
+    onAddChannel: (String) -> Unit,
+    onDismiss: () -> Unit
+) {
 
     val (importUrl, setImportUrl) = remember { mutableStateOf("") }
     var errorText: String? by remember { mutableStateOf(null) }
@@ -36,10 +33,19 @@ fun ImportChannelFromUrlDialog(scope: CoroutineScope, onDismiss: () -> Unit) {
         focusRequester.requestFocus()
     }
 
+    LaunchedEffect(addChannelOperation) {
+        when (addChannelOperation) {
+            is TaskProgress.Success -> {
+                onDismiss()
+            }
+            is TaskProgress.Failure -> {
+                errorText = addChannelOperation.error.message
+            }
+            else -> {}
+        }
+    }
+
     AlertDialog(
-//            icon = {
-//                Icon(icon, contentDescription = "Example Icon")
-//            },
         title = {
             Text(text = "Import channel from URL")
         },
@@ -60,15 +66,7 @@ fun ImportChannelFromUrlDialog(scope: CoroutineScope, onDismiss: () -> Unit) {
         onDismissRequest = onDismiss,
         confirmButton = {
             TextButton({
-                scope.launch {
-                    try {
-                        channelStore.addChannel(importUrl)
-                        onDismiss()
-                        snackbarHostState.showSnackbar("Added channel: $importUrl")
-                    } catch (t: Throwable) {
-                        errorText = t.message
-                    }
-                }
+                onAddChannel(importUrl)
             }) {
                 Text("Add")
             }

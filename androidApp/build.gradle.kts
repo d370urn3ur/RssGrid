@@ -1,5 +1,4 @@
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
-import org.jetbrains.kotlin.konan.properties.hasProperty
 import java.io.FileInputStream
 import java.util.Properties
 
@@ -48,7 +47,7 @@ android {
         versionName = "1.0.4"
     }
     signingConfigs {
-        val keystoreFile = if (keystoreProperties.hasProperty("storeFile")) {
+        val keystoreFile = if (keystoreProperties.containsKey("storeFile")) {
             val keystorePath = keystoreProperties["storeFile"] as String
             file(System.getProperty("user.home") + File.separator + keystorePath)
         } else {

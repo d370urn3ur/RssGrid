@@ -29,7 +29,6 @@ import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.kmpalette.loader.rememberNetworkLoader
 import com.kmpalette.rememberDominantColorState
 import com.skydoves.landscapist.ImageOptions
@@ -41,9 +40,9 @@ import newsgrid.composeapp.generated.resources.ic_check_circle
 import newsgrid.composeapp.generated.resources.ic_keyboard_arrow_down
 import newsgrid.composeapp.generated.resources.ic_keyboard_arrow_up
 import org.jetbrains.compose.resources.painterResource
+import the.autarch.newsgrid.bookmark.data.BookmarkSummary
 import the.autarch.newsgrid.channel.data.ChannelAndAllEntries
 import the.autarch.newsgrid.channel.data.ChannelEntity
-import the.autarch.newsgrid.channel.data.LocalChannelStore
 import the.autarch.newsgrid.entry.presentation.EntryItem
 import the.autarch.newsgrid.navigation.Route
 
@@ -56,6 +55,7 @@ fun ChannelItem(
     feed: ChannelAndAllEntries,
     selectedChannels: List<ChannelEntity>,
     onChannelSelected: (ChannelEntity) -> Unit,
+    bookmarks: List<BookmarkSummary>,
     isReordering: Boolean,
     onMove: (ReorderDirection) -> Unit,
     onNavigateToRoute: (Route) -> Unit
@@ -64,7 +64,6 @@ fun ChannelItem(
     val channel = feed.channel
     val entries = feed.entries.sortedByDescending { it.timestamp }
     val channelTitle = channel?.title ?: "Unknown channel"
-    val bookmarks by LocalChannelStore.current.bookmarks.collectAsStateWithLifecycle(emptyList())
     val bookmarkIds = bookmarks.map { it.link }
     val entriesListState = rememberLazyListState()
     val scope = rememberCoroutineScope()

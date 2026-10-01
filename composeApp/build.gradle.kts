@@ -51,6 +51,7 @@ kotlin {
             implementation(libs.material3)
             implementation(libs.ui)
             implementation(libs.components.resources)
+            implementation(libs.ui.tooling)
             implementation(libs.ui.tooling.preview)
             implementation(libs.androidx.lifecycle.viewmodel)
             implementation(libs.androidx.lifecycle.runtime.compose)
@@ -60,6 +61,8 @@ kotlin {
             implementation(libs.ktor.client.content.negotiation)
             implementation(libs.ktor.serialization.kotlinx.json)
             implementation(libs.navigation.compose)
+            implementation(libs.androidx.lifecycle.viewmodel.compose)
+            implementation(libs.androidx.lifecycle.viewmodel.navigation3)
             implementation(libs.androidx.room.runtime)
             implementation(libs.androidx.sqlite.bundled)
             implementation(libs.androidx.datastore)
@@ -82,6 +85,12 @@ kotlin {
             implementation(libs.htmlconverter)
             implementation(libs.ksoup)
         }
+
+        commonTest.dependencies {
+            implementation(kotlin("test"))
+            implementation(libs.kotlinx.coroutines.test)
+        }
+
         desktopMain.dependencies {
             implementation(compose.desktop.currentOs)
             implementation(libs.kotlinx.coroutines.swing)

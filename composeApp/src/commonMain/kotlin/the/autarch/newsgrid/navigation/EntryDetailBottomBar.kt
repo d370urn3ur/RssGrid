@@ -29,17 +29,19 @@ import newsgrid.composeapp.generated.resources.ic_share
 import newsgrid.composeapp.generated.resources.ic_three_dots
 import org.jetbrains.compose.resources.painterResource
 import the.autarch.newsgrid.LocalSnackbarHostState
-import the.autarch.newsgrid.channel.data.LocalChannelStore
 import the.autarch.newsgrid.share.rememberShareManager
 import the.autarch.newsgrid.toClipEntry
 
 @Composable
-fun EntryDetailBottomBar(entryId: String, isBookmarked: Boolean) {
+fun EntryDetailBottomBar(
+    entryId: String,
+    isBookmarked: Boolean,
+    onBookmarkClicked: () -> Unit
+) {
 
     val scope = rememberCoroutineScope()
     val clipboard = LocalClipboard.current
     val snackbar = LocalSnackbarHostState.current
-    val store = LocalChannelStore.current
     val uriHandler = LocalUriHandler.current
     val shareManager = rememberShareManager()
 
@@ -69,13 +71,7 @@ fun EntryDetailBottomBar(entryId: String, isBookmarked: Boolean) {
                 )
             }
 
-            IconButton({ scope.launch {
-                if (isBookmarked) {
-                    store.removeBookmark(entryId)
-                } else {
-                    store.saveBookmark(entryId)
-                }
-            }}) {
+            IconButton(onBookmarkClicked) {
                 val iconRes = if (isBookmarked) Res.drawable.ic_bookmark else Res.drawable.ic_bookmark_border
                 Icon(
                     painterResource(iconRes),

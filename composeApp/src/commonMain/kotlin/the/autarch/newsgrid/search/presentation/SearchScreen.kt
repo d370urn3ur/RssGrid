@@ -8,7 +8,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -18,15 +17,13 @@ import androidx.compose.material3.CardColors
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ElevatedCard
+import androidx.compose.material3.SnackbarDuration
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -34,23 +31,48 @@ import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import kotlinx.coroutines.launch
-import the.autarch.newsgrid.search.api.LocalSearchApi
+import the.autarch.newsgrid.AppUiAction
+import the.autarch.newsgrid.LocalSnackbarHostState
+import the.autarch.newsgrid.base.TaskProgress
 import the.autarch.newsgrid.search.data.SearchResult
-import the.autarch.newsgrid.search.data.SearchStore
 
 @Composable
-fun SearchScreen() {
+fun SearchScreen(
+    viewModel: SearchScreenViewModel = searchViewModel(),
+    addChannelOperation: TaskProgress<String>,
+    onAddChannel: (String) -> Unit
+) {
 
-    val (searchText, setSearchText) = remember { mutableStateOf("") }
-    val scope = rememberCoroutineScope()
-    val api = LocalSearchApi.current
-    val searchStore = remember { SearchStore(api) }
-    val searchResults by searchStore.searchResults.collectAsStateWithLifecycle()
-    val loading by searchStore.loading.collectAsStateWithLifecycle()
-    var showSearchResultDetailsDialog by remember { mutableStateOf<SearchResult?>(null) }
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+
+    LaunchedEffect(addChannelOperation) {
+        when (addChannelOperation) {
+            is TaskProgress.Success -> {
+                viewModel.onAction(SearchScreenUiAction.OnSearchResultSelected(null))
+            }
+            is TaskProgress.Failure -> {
+                viewModel.onAction(SearchScreenUiAction.OnSearchResultSelected(null))
+            }
+            else -> {}
+        }
+    }
+
+    SearchScreenContent(uiState, {
+        viewModel.onAction(it)
+    }, onAddChannel)
+}
+
+@Composable
+fun SearchScreenContent(
+    uiState: SearchScreenUiState,
+    onAction: (SearchScreenUiAction) -> Unit,
+    onAddChannel: (String) -> Unit
+) {
+
+    val searchOp = uiState.searchOperation
 
     Column(
         modifier = Modifier
@@ -62,6 +84,7 @@ fun SearchScreen() {
     ) {
 
         val uriHandler = LocalUriHandler.current
+
         Text(
             "Search powered by Feedsearch",
             modifier = Modifier.clickable {
@@ -80,8 +103,8 @@ fun SearchScreen() {
             elevation = CardDefaults.elevatedCardElevation(defaultElevation = 8.dp)
         ) {
             TextField(
-                value = searchText,
-                onValueChange = setSearchText,
+                value = uiState.query,
+                onValueChange = { onAction(SearchScreenUiAction.OnQueryChanged(it)) },
                 modifier = Modifier.fillMaxWidth(),
                 keyboardOptions = KeyboardOptions(
                     autoCorrectEnabled = false,
@@ -90,9 +113,7 @@ fun SearchScreen() {
                 ),
                 keyboardActions = KeyboardActions(
                     onSearch = {
-                        scope.launch {
-                            searchStore.search(searchText)
-                        }
+                        onAction(SearchScreenUiAction.OnSearchSubmitted)
                     }
                 ),
                 singleLine = true,
@@ -109,39 +130,107 @@ fun SearchScreen() {
             )
         }
 
-        if (loading) {
+        when (searchOp) {
 
-            Box(
+            is TaskProgress.Running -> Box(
                 modifier = Modifier.fillMaxSize(),
                 contentAlignment = Alignment.Center
             ) {
                 CircularProgressIndicator()
             }
 
-        } else if (searchResults.isNotEmpty()) {
-
-            LazyColumn(
-                verticalArrangement = Arrangement.spacedBy(8.dp)
-            ) {
-                items(searchResults) {
-                    SearchResultItem(it) {
-                        showSearchResultDetailsDialog = it
+            is TaskProgress.Success -> {
+                if (searchOp.result.isNotEmpty()) {
+                    LazyColumn(
+                        verticalArrangement = Arrangement.spacedBy(8.dp)
+                    ) {
+                        items(searchOp.result) {
+                            SearchResultItem(it) {
+                                onAction(SearchScreenUiAction.OnSearchResultSelected(it))
+                            }
+                        }
                     }
                 }
             }
 
-        } else {
-
-            Text(
+            else -> Text(
                 "Search by domain. \n Ex: arstechnica.com, slashdot.org, cnn.com",
                 textAlign = TextAlign.Center
             )
         }
 
-        showSearchResultDetailsDialog?.let {
-            SearchResultDetailsDialog(it, scope) {
-                showSearchResultDetailsDialog = null
-            }
+        uiState.selectedSearchResult?.let {
+            SearchResultDetailsDialog(
+                searchResult = it,
+                onAddChannel = { onAddChannel(it.url) },
+                onDismiss = {
+                    onAction(SearchScreenUiAction.OnSearchResultSelected(null))
+                }
+            )
         }
     }
+}
+
+@Preview(showBackground = true, showSystemUi = true)
+@Composable
+fun SearchScreenPreview_Idle() {
+    SearchScreenContent(
+        uiState = SearchScreenUiState(query = ""),
+        onAction = {},
+        onAddChannel = {}
+    )
+}
+
+@Preview(showBackground = true, showSystemUi = true)
+@Composable
+fun SearchScreenPreview_Loading() {
+    SearchScreenContent(
+        uiState = SearchScreenUiState(
+            query = "arstechnica.com",
+            searchOperation = TaskProgress.Running()
+        ),
+        onAction = {},
+        onAddChannel = {}
+    )
+}
+
+@Preview(showBackground = true, showSystemUi = true)
+@Composable
+fun SearchScreenPreview_SuccessWithResults() {
+    SearchScreenContent(
+        uiState = SearchScreenUiState(
+            query = "arstechnica.com",
+            searchOperation = TaskProgress.Success(
+                listOf(
+                    SearchResult(
+                        title = "Ars Technica",
+                        url = "https://feeds.arstechnica.com/arstechnica/index",
+                        description = "Dev, Tech, Science News"
+                    )
+                )
+            )
+        ),
+        onAction = {},
+        onAddChannel = {}
+    )
+}
+
+@Preview(showBackground = true, showSystemUi = true)
+@Composable
+fun SearchScreenPreview_DialogShowing() {
+    val sampleResult = SearchResult(
+        title = "Ars Technica Main Feed",
+        url = "https://feeds.arstechnica.com/arstechnica/index",
+        description = "All news & features"
+    )
+
+    SearchScreenContent(
+        uiState = SearchScreenUiState(
+            query = "arstechnica.com",
+            searchOperation = TaskProgress.Success(listOf(sampleResult)),
+            selectedSearchResult = sampleResult
+        ),
+        onAction = {},
+        onAddChannel = {}
+    )
 }

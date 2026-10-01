@@ -12,53 +12,58 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.Stable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.text.font.FontStyle
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import be.digitalia.compose.htmlconverter.htmlToAnnotatedString
 import io.github.adrcotfas.datetime.names.FormatStyle
 import io.github.adrcotfas.datetime.names.format
-import kotlinx.coroutines.launch
-import kotlinx.datetime.LocalDateTime
 import kotlinx.datetime.TimeZone
-import kotlinx.datetime.format
-import kotlinx.datetime.format.DateTimeComponents
-import kotlinx.datetime.format.DateTimeFormat
 import kotlinx.datetime.toLocalDateTime
-import the.autarch.newsgrid.channel.data.LocalChannelStore
+import the.autarch.newsgrid.base.TaskProgress
 import the.autarch.newsgrid.entry.data.Entry
 import the.autarch.newsgrid.entry.data.EntryEntity
 import kotlin.time.Instant
 
 @Composable
-fun EntryDetailsScreen(entryId: String) {
+fun EntryDetailsScreen(
+    entryId: String,
+    viewModel: EntryDetailsViewModel = entryDetailsViewModel()
+) {
 
-    val scope = rememberCoroutineScope()
-    val store = LocalChannelStore.current
-    var entry by remember { mutableStateOf<EntryEntity?>(null) }
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
     LaunchedEffect(entryId) {
-        scope.launch {
-            entry = store.getEntry(entryId)
-        }
+        viewModel.getEntry(entryId)
     }
 
     Surface(
         modifier = Modifier.fillMaxSize(),
         color = MaterialTheme.colorScheme.background
     ) {
-        entry?.let { entry ->
-            EntryDetailsScreenContent(entry)
+        when (val status = uiState.getEntryOperation) {
+            is TaskProgress.Success -> EntryDetailsScreenContent(status.result)
+            is TaskProgress.Failure -> {
+                // TODO: show error screen
+            }
+            else -> {
+                // TODO: show circularprogress
+            }
         }
     }
 }
+
+@Stable
+data class EntryDetailsUiState(
+    val getEntryOperation: TaskProgress<EntryEntity> = TaskProgress.Idle
+)
 
 @Composable
 fun EntryDetailsScreenContent(entry: Entry) {
@@ -131,3 +136,11 @@ fun EntryDetailsScreenContent(entry: Entry) {
         }
     }
 }
+
+//@Preview(showSystemUi = true, showBackground = true)
+//@Composable
+//fun PreviewEntryDetailsScreen() {
+//    EntryDetailsScreenContent(
+//        Entry()
+//    )
+//}

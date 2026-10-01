@@ -9,15 +9,12 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.navigation.NavBackStackEntry
-import androidx.navigation.NavDestination.Companion.hasRoute
-import androidx.navigation.compose.currentBackStackEntryAsState
-import androidx.navigation.toRoute
 import androidx.navigation3.runtime.NavKey
-import kotlinx.coroutines.launch
 import newsgrid.composeapp.generated.resources.Res
 import newsgrid.composeapp.generated.resources.ic_add
 import newsgrid.composeapp.generated.resources.ic_arrow_back
@@ -25,9 +22,12 @@ import newsgrid.composeapp.generated.resources.ic_check_circle
 import newsgrid.composeapp.generated.resources.ic_cross_circle
 import newsgrid.composeapp.generated.resources.ic_delete
 import newsgrid.composeapp.generated.resources.ic_reorder
+import newsgrid.composeapp.generated.resources.ic_vertical_align_bottom
 import org.jetbrains.compose.resources.painterResource
+import the.autarch.newsgrid.AppUiAction
+import the.autarch.newsgrid.base.TaskProgress
 import the.autarch.newsgrid.channel.data.ChannelEntity
-import the.autarch.newsgrid.channel.data.LocalChannelStore
+import the.autarch.newsgrid.channel.presentation.ImportChannelFromUrlDialog
 
 // TODO: expect AppBar for each platform (ex: CenterAppBar for iOS)
 
@@ -36,9 +36,9 @@ import the.autarch.newsgrid.channel.data.LocalChannelStore
 fun AppBar(
     currentlyVisibleRoute: NavKey,
     selectedChannels: List<ChannelEntity>,
-    onDeselectChannels: () -> Unit,
     isReordering: Boolean,
-    onToggleReorder: () -> Unit,
+    addChannelOperation: TaskProgress<String>,
+    onAppAction: (AppUiAction) -> Unit,
     onBack: () -> Unit,
     onNavigateToRoute: (Route) -> Unit
 ) {
@@ -47,22 +47,27 @@ fun AppBar(
     val containerColor = if (isContextual) MaterialTheme.colorScheme.secondaryContainer else MaterialTheme.colorScheme.primaryContainer
     val contentColor = if (isContextual) MaterialTheme.colorScheme.onSecondaryContainer else MaterialTheme.colorScheme.onPrimaryContainer
 
-    val scope = rememberCoroutineScope()
-    val store = LocalChannelStore.current
-
     TopAppBar(
         title = { AppBarTitle(currentlyVisibleRoute, isContextual) },
-        navigationIcon = { AppBarNavigationIcon(currentlyVisibleRoute, isContextual, onDeselectChannels, onBack) },
+        navigationIcon = { AppBarNavigationIcon(
+            currentlyVisibleRoute,
+            isContextual,
+            { onAppAction(AppUiAction.DeselectChannels) },
+            onBack
+        ) },
         actions = {
             AppBarActions(
                 currentlyVisibleRoute,
                 isContextual,
                 isReordering,
-                onToggleReorder,
-                onDelete = { scope.launch {
-                    onDeselectChannels()
-                    store.deleteChannels(selectedChannels)
-                } },
+                { onAppAction(AppUiAction.ToggleReorderingMode) },
+                onDelete = {
+                    val selectedChannels = selectedChannels
+                    onAppAction(AppUiAction.DeselectChannels)
+                    onAppAction(AppUiAction.DeleteChannels(selectedChannels))
+                },
+                addChannelOperation = addChannelOperation,
+                onAddChannel = { url -> onAppAction(AppUiAction.AddChannel(url)) },
                 onNavigateToRoute = onNavigateToRoute
             )
         },
@@ -117,8 +122,12 @@ fun AppBarActions(
     isReordering: Boolean,
     onToggleReorder: () -> Unit,
     onDelete: () -> Unit,
+    addChannelOperation: TaskProgress<String>,
+    onAddChannel: (String) -> Unit,
     onNavigateToRoute: (Route) -> Unit
 ) {
+
+    var showImportDialog by remember { mutableStateOf(false) }
 
     when (currentlyVisibleRoute) {
         is Route.Main -> {
@@ -153,8 +162,26 @@ fun AppBarActions(
                 }
             }
         }
-        is Route.Search -> AppBarButtonImportChannel()
+        is Route.Search -> IconButton({ showImportDialog = true }) {
+            Icon(
+                painter = painterResource(Res.drawable.ic_vertical_align_bottom),
+                contentDescription = "Import from URL"
+            )
+        }
         else -> {}
+    }
+
+    if (showImportDialog) {
+        ImportChannelFromUrlDialog(
+            addChannelOperation = addChannelOperation,
+            onAddChannel = { url ->
+                showImportDialog = false
+                onAddChannel(url)
+            },
+            onDismiss = {
+                showImportDialog = false
+            }
+        )
     }
 }
 
