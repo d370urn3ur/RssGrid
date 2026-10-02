@@ -7,6 +7,8 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
 import kotlinx.datetime.DateTimeUnit
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.until
@@ -23,29 +25,33 @@ class RefreshChannelsUseCase(
 ) {
 
     companion object {
-        val REFRESH_THRESHOLD = 1.minutes
+        val REFRESH_THRESHOLD = 10.minutes
+        private val mutex = Mutex()
     }
 
     fun execute(forceRefresh: Boolean = false): Flow<TaskProgress<Unit>> = flow {
+        mutex.withLock {
 
-        if (!forceRefresh) {
-            val lastUpdateMillis = prefs.data.map {
-                it[LAST_UPDATE] ?: Instant.DISTANT_PAST.toEpochMilliseconds()
-            }.first()
-            val lastUpdate = Instant.fromEpochMilliseconds(lastUpdateMillis)
-            val diffMinutes = lastUpdate.until(Clock.System.now(), DateTimeUnit.MINUTE, TimeZone.UTC)
-            if (diffMinutes.minutes < REFRESH_THRESHOLD) {
-                emit(TaskProgress.Success(Unit))
-                return@flow
+            if (!forceRefresh) {
+                val lastUpdateMillis = prefs.data.map {
+                    it[LAST_UPDATE] ?: Instant.DISTANT_PAST.toEpochMilliseconds()
+                }.first()
+                val lastUpdate = Instant.fromEpochMilliseconds(lastUpdateMillis)
+                val diffMinutes =
+                    lastUpdate.until(Clock.System.now(), DateTimeUnit.MINUTE, TimeZone.UTC)
+                if (diffMinutes.minutes < REFRESH_THRESHOLD) {
+                    emit(TaskProgress.Success(Unit))
+                    return@flow
+                }
             }
+
+            channelRepo.refreshChannels()
+
+            prefs.edit { settings ->
+                settings[LAST_UPDATE] = Clock.System.now().toEpochMilliseconds()
+            }
+
+            emit(TaskProgress.Success(Unit))
         }
-
-        channelRepo.refreshChannels()
-
-        prefs.edit { settings ->
-            settings[LAST_UPDATE] = Clock.System.now().toEpochMilliseconds()
-        }
-
-        emit(TaskProgress.Success(Unit))
     }
 }
