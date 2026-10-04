@@ -50,7 +50,8 @@ jobs:
 
       - name: Create Release
         id: create_release
-        uses: ncipollo/release-action@v1.13.0
+        uses: ncipollo/release-action@v1.21.0
+        # uses: ncipollo/release-action@v1.13.0
         with:
           artifacts: "androidApp/build/outputs/app-release-signed.aab, androidApp/build/outputs/app-release-signed.apk"
           body: ${{ steps.changelog.outputs.changelog }}
